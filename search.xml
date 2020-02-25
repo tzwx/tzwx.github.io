@@ -4,6 +4,60 @@
   
     
     <entry>
+      <title>Classification</title>
+      <link href="/2020/02/25/Classification/"/>
+      <url>/2020/02/25/Classification/</url>
+      
+        <content type="html"><![CDATA[<html><head><link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script></head><body><p>DeepLearning中另外一个常见的问题就是分类问题，这里以二分类为例。</p><p><strong>做二分类可不可以直接当作回归问题来处理呢？</strong>例如人为规定 calss1 对应输出值为1， class2对应值为-1，然后以均方误差为loss，做损失函数，这样直接train是可以train出来的，但是这样有一个问题，回归损失函数会惩罚比较大的正确项，例如一个数得出来结果是10远大于1，但是它和1明显是一类，而用回归做的话就会尽量减小这一loss，导致出现错误的结果，如下图：本来绿色的线是正确的分类，但是因为回归的惩罚会导致偏向紫色。 这是因为回归和分类的判断标准不一样。</p><a href="https://user-images.githubusercontent.com/60562661/75210259-88921f80-57bb-11ea-9985-19f163a398c7.png" data-fancybox="group" data-caption="1582596902251" class="fancybox"><img alt="1582596902251" style="zoom: 67%;" title="1582596902251" data-src="https://user-images.githubusercontent.com/60562661/75210259-88921f80-57bb-11ea-9985-19f163a398c7.png" class="lazyload"></a><h2 id="分类流程"><a href="#分类流程" class="headerlink" title="分类流程"></a>分类流程</h2><a href="https://user-images.githubusercontent.com/60562661/75210541-5208d480-57bc-11ea-8f59-6ba28470aa88.png" data-fancybox="group" data-caption="1582597091411" class="fancybox"><img alt="1582597091411" style="zoom:80%;" title="1582597091411" data-src="https://user-images.githubusercontent.com/60562661/75210541-5208d480-57bc-11ea-8f59-6ba28470aa88.png" class="lazyload"></a><ol><li>这里的model直接用的贝叶斯求出概率</li><li>假设x服从高斯分布，此时要求出  <strong>μ，σ</strong>  用最大似然估计使得这个高斯分布所采样出来的这些点的概率最大</li><li>求解最优的μ，σ。<strong>μ 就是一组书的均值mean</strong>  ，  μ，σ都有对应公式，也可以根据微分来求，如下图：</li></ol><p><a href="https://user-images.githubusercontent.com/60562661/75210260-8a5be300-57bb-11ea-9423-008452e862f7.png" data-fancybox="group" data-caption="1582597521938" class="fancybox"><img alt="1582597521938" title="1582597521938" data-src="https://user-images.githubusercontent.com/60562661/75210260-8a5be300-57bb-11ea-9423-008452e862f7.png" class="lazyload"></a></p><h2 id="分类与回归的转化"><a href="#分类与回归的转化" class="headerlink" title="分类与回归的转化"></a>分类与回归的转化</h2><p>这里用图片截图出所有的公式推导，可以从第一张图直接跳到最后一张图看结论</p><a href="https://user-images.githubusercontent.com/60562661/75210261-8af47980-57bb-11ea-873f-1021dc6ebb25.png" data-fancybox="group" data-caption="1582597604571" class="fancybox"><img alt="1582597604571" style="zoom: 67%;" title="1582597604571" data-src="https://user-images.githubusercontent.com/60562661/75210261-8af47980-57bb-11ea-873f-1021dc6ebb25.png" class="lazyload"></a><a href="https://user-images.githubusercontent.com/60562661/75210263-8b8d1000-57bb-11ea-8165-8be93e1efb95.png" data-fancybox="group" data-caption="1582597627023" class="fancybox"><img alt="1582597627023" style="zoom:67%;" title="1582597627023" data-src="https://user-images.githubusercontent.com/60562661/75210263-8b8d1000-57bb-11ea-8165-8be93e1efb95.png" class="lazyload"></a><a href="https://user-images.githubusercontent.com/60562661/75210265-8c25a680-57bb-11ea-9849-26770bf8584c.png" data-fancybox="group" data-caption="1582597710255" class="fancybox"><img alt="1582597710255" style="zoom:67%;" title="1582597710255" data-src="https://user-images.githubusercontent.com/60562661/75210265-8c25a680-57bb-11ea-9849-26770bf8584c.png" class="lazyload"></a><a href="https://user-images.githubusercontent.com/60562661/75210268-8d56d380-57bb-11ea-943d-fac3d39d44f8.png" data-fancybox="group" data-caption="1582597747533" class="fancybox"><img alt="1582597747533" style="zoom:67%;" title="1582597747533" data-src="https://user-images.githubusercontent.com/60562661/75210268-8d56d380-57bb-11ea-943d-fac3d39d44f8.png" class="lazyload"></a><a href="https://user-images.githubusercontent.com/60562661/75210270-8def6a00-57bb-11ea-89c0-bfd800f1c1c0.png" data-fancybox="group" data-caption="1582597839955" class="fancybox"><img alt="1582597839955" style="zoom: 37%;" title="1582597839955" data-src="https://user-images.githubusercontent.com/60562661/75210270-8def6a00-57bb-11ea-89c0-bfd800f1c1c0.png" class="lazyload"></a><p><strong>也就是说分类函数经过一系列的转换，最终变成了线性函数，即 <code>P(C1|X) = σ(w * x + b)</code>,之前的方法我们要求五个参数才可以计算到最终结果，现在我们可以直接计算w，b就可以得到最终的概率！此时就变成了回归问题。然后就有了后面的逻辑回归，用交叉熵求出w，b</strong></p></body></html>]]></content>
+      
+      
+      <categories>
+          
+          <category> 技术 </category>
+          
+          <category> 深度学习 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 分类 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>梯度下降法 ③_数学公式起源深入</title>
+      <link href="/2020/02/24/%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95%E4%B8%89/"/>
+      <url>/2020/02/24/%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95%E4%B8%89/</url>
+      
+        <content type="html"><![CDATA[<html><head><link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script></head><body><p>Gradient Descent 前面的文章讲了基本的流程，可以知道基本的梯度下降法更新参数流程是 <code>w_new = w_origin - のL/のw</code>， 这里为什么是负号呢？为甚要乘以梯度方向呢？这一切要从<strong>泰勒级数</strong>说起。</p><h2 id="Taylor-Series"><a href="#Taylor-Series" class="headerlink" title="Taylor Series"></a>Taylor Series</h2><p>假设函数 h(x) 在 x = x0 处<strong>无限可导</strong>，那么h(x)可以展开成如下：其中，x很接近x0时，后面的高次项边都可以忽略，因此约等于前两项。</p><a href="https://user-images.githubusercontent.com/60562661/75151086-d0c02c00-5740-11ea-99de-91d92c032776.png" data-fancybox="group" data-caption="1582543708651" class="fancybox"><img alt="1582543708651" style="zoom:80%;" title="1582543708651" data-src="https://user-images.githubusercontent.com/60562661/75151086-d0c02c00-5740-11ea-99de-91d92c032776.png" class="lazyload"></a><p>上图是泰勒级数在只有<strong>一个变量</strong>时的展开式，同样多个变量也可以展开：</p><a href="https://user-images.githubusercontent.com/60562661/75151091-d3228600-5740-11ea-94dc-c6122f01fd81.png" data-fancybox="group" data-caption="1582543838152" class="fancybox"><img alt="1582543838152" style="zoom: 80%;" title="1582543838152" data-src="https://user-images.githubusercontent.com/60562661/75151091-d3228600-5740-11ea-94dc-c6122f01fd81.png" class="lazyload"></a><h2 id="Based-Taylor-Series"><a href="#Based-Taylor-Series" class="headerlink" title="Based Taylor Series"></a>Based Taylor Series</h2><a href="https://user-images.githubusercontent.com/60562661/75151093-d3bb1c80-5740-11ea-86f9-ea1c98811b0b.png" data-fancybox="group" data-caption="1582544427626" class="fancybox"><img alt="1582544427626" style="zoom:80%;" title="1582544427626" data-src="https://user-images.githubusercontent.com/60562661/75151093-d3bb1c80-5740-11ea-86f9-ea1c98811b0b.png" class="lazyload"></a><p>如图，在点(a,b)处取一个足够小的圆，此时损失函数 L(θ) 便可以根据泰勒公式在(a,b)处展开，其中 s，u，v, 三项均为常数。u是L在θ1方向的偏导数，v是L在θ2方向的偏导数。</p><a href="https://user-images.githubusercontent.com/60562661/75151095-d453b300-5740-11ea-8f7b-016c1949553c.png" data-fancybox="group" data-caption="1582544740168" class="fancybox"><img alt="1582544740168" style="zoom:80%;" title="1582544740168" data-src="https://user-images.githubusercontent.com/60562661/75151095-d453b300-5740-11ea-8f7b-016c1949553c.png" class="lazyload"></a><p>此时要最小化L，把上图公式中 <strong>θ 1 -  a **用▲θ1表示，</strong>θ 2 - b <strong>用▲θ2表示，s与θ无关因此可以忽略，公式L 看起来就比较简单了，可以看成是 vector(u, v)  与  vector(▲θ1, ▲θ2) 的内积，则当(▲θ1, ▲θ2)处于圆上(长度最大)，方向相反(cos  = -1)时内积最小，因此可以得到图中最下面的推导公式，乘以 **-n</strong> 表示的是比例，使得(▲θ1, ▲θ2)位于圆上，<strong>负号</strong>则是与(u, v) 方向相反。将(▲θ1, ▲θ2)换算之后便会得出通常的更新参数的公式，因此得出了文章最初的<code>w_new = w_origin - n*のL/のw</code>，因此梯度方向下降最快，要乘以负的学习率。</p><p><strong>至此梯度下降法的来源也都已清楚！</strong></p></body></html>]]></content>
+      
+      
+      <categories>
+          
+          <category> 技术 </category>
+          
+          <category> 深度学习 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 梯度下降法 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>斐波那契额数列几种实现方式</title>
       <link href="/2020/02/23/%E6%96%90%E6%B3%A2%E9%82%A3%E5%A5%91%E9%A2%9D%E6%95%B0%E5%88%97%E5%87%A0%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/"/>
       <url>/2020/02/23/%E6%96%90%E6%B3%A2%E9%82%A3%E5%A5%91%E9%A2%9D%E6%95%B0%E5%88%97%E5%87%A0%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/</url>
@@ -334,7 +388,7 @@
     
     
     <entry>
-      <title>梯度下降法 ②</title>
+      <title>梯度下降法 ②_学习率</title>
       <link href="/2020/02/10/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8%E7%B3%BB%E5%88%97%E4%B8%80-%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95-%E2%91%A1/"/>
       <url>/2020/02/10/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8%E7%B3%BB%E5%88%97%E4%B8%80-%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95-%E2%91%A1/</url>
       
@@ -361,7 +415,7 @@
     
     
     <entry>
-      <title>梯度下降法 ①</title>
+      <title>梯度下降法 ①_概述</title>
       <link href="/2020/02/10/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8%E7%B3%BB%E5%88%97%E4%B8%80-%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95/"/>
       <url>/2020/02/10/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8%E7%B3%BB%E5%88%97%E4%B8%80-%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95/</url>
       
