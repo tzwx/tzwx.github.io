@@ -74,7 +74,7 @@ function activateLightMode(){
 <p>这个可以理解为 每个神经元都是一个线性的函数，<code>w*x+b</code>，但是当很多神经元组合在一起，就可以模拟出曲线，神经元越多，拟合出的曲线也就会越平滑，这里有点类似于微分，认为曲线是无线可切分的，切到最后会近似成直线，反之，无限多个线性函数自然可以拟合出很平滑的曲线。</p>
 <p>但是这只是理论上的，实际上如果真的只采用两层的神经网络，在可行性上就会有很大的问题，比如由于参数量过多可能根本训练不起来。</p>
 <h2 id="Residual-Block"><a href="#Residual-Block" class="headerlink" title="Residual Block"></a>Residual Block</h2><h3 id="退化问题"><a href="#退化问题" class="headerlink" title="退化问题"></a>退化问题</h3><p>首先，一般认为神经网络层数越深，表达能力会越强。但是实际上，随着神经网络层数加深，却可能出现准确率降低，注意不是过拟合，称为退化问题。因此这种网络结构设计主要是解决了退化问题。而这个方法的出现，也意味着 更深的神经网络可以训练起来了。</p>
-<p><a href="https://user-images.githubusercontent.com/60562661/75651146-cba83300-5c92-11ea-89dd-d2079e49198f.png" target="_blank" rel="noopener" data-fancybox="group" data-caption="1583123998907" class="fancybox"><img alt="1583123998907" data-src="https://user-images.githubusercontent.com/60562661/75651146-cba83300-5c92-11ea-89dd-d2079e49198f.png" class="lazyload" title="1583123998907"></a></p>
+<p><a href="https://user-images.githubusercontent.com/60562661/75651146-cba83300-5c92-11ea-89dd-d2079e49198f.png" target="_blank" rel="noopener" data-fancybox="group" data-caption="1583123998907" class="fancybox"><img alt="1583123998907" title="1583123998907" data-src="https://user-images.githubusercontent.com/60562661/75651146-cba83300-5c92-11ea-89dd-d2079e49198f.png" class="lazyload"></a></p>
 <p>上图便是残差模块。x是输入，经过中间的隐藏层后不直接输出F(x)，而是输入x两一个分支连接到输出出，最终输出F(x)+x,即：</p>
 <script type="math/tex; mode=display">
 H(x) = F(x) + x</script><p>因为之前的层表现已经很好了，这个多出来的层的本来的学习目标是：让H(x)=x，也就是说尽量让输出不变，但是实际上很难学习到这一点，所以现在的目标就变成了让<code>F(x)->0</code></p>
@@ -83,7 +83,7 @@ H(x) = F(x) + x</script><p>因为之前的层表现已经很好了，这个多�
 <li>Hidden Layer 权重初始化都在0附近，输出的值自然会比较靠近0，因此可能会更好的训练；</li>
 <li>在该结构中，所有的激活函数都是 <code>RELU</code>, 而relu函数的特性是：小于等于0都置0，这就说明不管怎么样总有一半的概率可以直接置0，不用去计算</li>
 </ul>
-<p><a href="https://user-images.githubusercontent.com/60562661/75651148-ce0a8d00-5c92-11ea-95f6-543f0458f5d1.png" target="_blank" rel="noopener" data-fancybox="group" data-caption="1583126154433" class="fancybox"><img alt="1583126154433" data-src="https://user-images.githubusercontent.com/60562661/75651148-ce0a8d00-5c92-11ea-95f6-543f0458f5d1.png" class="lazyload" title="1583126154433"></a></p>
+<p><a href="https://user-images.githubusercontent.com/60562661/75651148-ce0a8d00-5c92-11ea-95f6-543f0458f5d1.png" target="_blank" rel="noopener" data-fancybox="group" data-caption="1583126154433" class="fancybox"><img alt="1583126154433" title="1583126154433" data-src="https://user-images.githubusercontent.com/60562661/75651148-ce0a8d00-5c92-11ea-95f6-543f0458f5d1.png" class="lazyload"></a></p>
 <p>这张图可以看出来，解决了退化问题后，34层的误差明显低于18层</p>
 <h3 id="梯度弥散"><a href="#梯度弥散" class="headerlink" title="梯度弥散"></a>梯度弥散</h3><p>关于梯度弥散这个问题我纠结了比较久，发现问题在于我把x理解的狭隘了。从数学上理解一下这个问题 ：</p>
 <script type="math/tex; mode=display">
