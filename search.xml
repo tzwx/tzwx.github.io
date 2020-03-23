@@ -4,6 +4,33 @@
   
     
     <entry>
+      <title>softmax函数详解</title>
+      <link href="/2020/03/23/softmax%E5%87%BD%E6%95%B0%E8%AF%A6%E8%A7%A3/"/>
+      <url>/2020/03/23/softmax%E5%87%BD%E6%95%B0%E8%AF%A6%E8%A7%A3/</url>
+      
+        <content type="html"><![CDATA[<html><head><link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script></head><body><h2 id="softmax-作用"><a href="#softmax-作用" class="headerlink" title="softmax 作用"></a>softmax 作用</h2><p><code>softmax</code> 函数一般用在分类场景，尤其是多分类，它接受一组任意值作为输入，然后输出对应的一组<strong>0-1</strong>之间的数值，并且加起来为1，也就是做了归一化，实际上输出的值代表概率值。</p><h2 id="softmax-计算方式"><a href="#softmax-计算方式" class="headerlink" title="softmax 计算方式"></a>softmax 计算方式</h2><p><a href="https://user-images.githubusercontent.com/60562661/77334644-0e27d180-6d60-11ea-9844-be15700132e4.png" data-fancybox="group" data-caption class="fancybox"><img alt title data-src="https://user-images.githubusercontent.com/60562661/77334644-0e27d180-6d60-11ea-9844-be15700132e4.png" class="lazyload"></a></p><p>如上图，z1,z2,z3 作为输入，分别取<code>exp</code>, 然后加起来作为分母，分别的除以分母就得到对应的值。即zi的softmax值为：</p><script type="math/tex; mode=display">S_{z_i} = \frac{\exp(z_i)}{\sum_{j=1}^3 \exp(z_j)  }</script><p>推广一下：</p><script type="math/tex; mode=display">S_{z_i} = \frac{ \exp(z_i)}{\sum_{j} \exp(z_j)  }</script><p>其中，$\sum_{j} \exp(z_j) = 1$</p><h2 id="再看交叉熵"><a href="#再看交叉熵" class="headerlink" title="再看交叉熵"></a>再看交叉熵</h2><p>对于二分类问题，交叉熵函数为：</p><script type="math/tex; mode=display">L = \hat{y_i}*\ln {y_i} + (1-\hat{y_i})*\ln{(1- y_i)}</script><p>对于多分类问题：</p><script type="math/tex; mode=display">L = -\hat{y}*\ln(y)</script><p>其中，$\hat{y}$表示label，y表示预测的值，由softmax函数计算得到</p><h2 id="softmax求导"><a href="#softmax求导" class="headerlink" title="softmax求导"></a>softmax求导</h2><p>上面已经知道多分类时交叉熵的公式，预测第i个时，认为它的label是1，则：</p><script type="math/tex; mode=display">L_i = -\ln(y_i)</script><p>则：</p><script type="math/tex; mode=display">\frac{\partial L_i}{\partial i} = -\frac{\partial{\ln(y_i)}}{\partial i} = \frac{\partial \ln (\frac{e^{y_i}}{\sum_j e^j})}{\partial i} =··· ···=y_i-1</script><p>具体推导如下图：</p><p><a href="https://user-images.githubusercontent.com/60562661/77334662-14b64900-6d60-11ea-9b3d-beca92583e36.png" data-fancybox="group" data-caption="undefined" class="fancybox"><img style="zoom:70%;" data-src="https://user-images.githubusercontent.com/60562661/77334662-14b64900-6d60-11ea-9b3d-beca92583e36.png" class="lazyload"></a></p><hr><p>以上便是softmax函数的相关知识了。</p></body></html>]]></content>
+      
+      
+      <categories>
+          
+          <category> 技术 </category>
+          
+          <category> 深度学习 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> softmax </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>pytorch常用的几个操作</title>
       <link href="/2020/03/21/pytorch%E5%B8%B8%E7%94%A8%E7%9A%84%E5%87%A0%E4%B8%AA%E5%87%BD%E6%95%B0/"/>
       <url>/2020/03/21/pytorch%E5%B8%B8%E7%94%A8%E7%9A%84%E5%87%A0%E4%B8%AA%E5%87%BD%E6%95%B0/</url>
@@ -145,7 +172,7 @@
       <link href="/2020/03/19/Hello,World/"/>
       <url>/2020/03/19/Hello,World/</url>
       
-        <content type="html"><![CDATA[<html><head><link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script></head><body><h2 id="Linux-Ubuntu-操作指令"><a href="#Linux-Ubuntu-操作指令" class="headerlink" title="Linux(Ubuntu) 操作指令"></a>Linux(Ubuntu) 操作指令</h2><p>记录一下我自己在Linux下常用的操作指令，会一直更新。</p><h3 id="Python环境、库安装"><a href="#Python环境、库安装" class="headerlink" title="Python环境、库安装"></a>Python环境、库安装</h3><p><strong>source activate HPEG_PT</strong>      激活虚拟环境</p><p> <strong>mkvirtualenv</strong>     创建虚拟环境</p><p><strong>conda create -n NEW_Nmae python=3.6</strong>      conda创建虚拟环境</p><p><strong>conda install pytorch=0.4.0 torchvision cudatoolkit=9.0 -c pytorch</strong>       安装pytorch</p><p><strong>pip install tensorflow-gpu==1.12</strong>  安装任意版本tensorflow</p><p><strong>pip install -i <a href="https://pypi.tuna.tsinghua.edu.cn/simple" target="_blank" rel="noopener">https://pypi.tuna.tsinghua.edu.cn/simple</a> numpy(指定的库)</strong>    pip使用清华镜像安装库，不能翻墙可提高下载速度</p><hr><h3 id="程序监控、进程"><a href="#程序监控、进程" class="headerlink" title="程序监控、进程"></a>程序监控、进程</h3><p><strong>htop F4 f9 9 Enter</strong>   杀死某个指定进程</p><ul><li>htop 打开任务监视器</li></ul><p><strong>watch -n 1 nvidia-smi</strong>          查看显卡使用情况，每隔一秒刷新一次情况</p><p> <strong>nohup python -u train.py &>nohup.out&</strong>  命令调到后台执行，并且输出信息写到<code>nohup.out</code>文件中，这个很有用，操作服务器时本地窗口可以关掉不影响服务器运行</p><h3 id="Net-网络相关"><a href="#Net-网络相关" class="headerlink" title="Net 网络相关"></a>Net 网络相关</h3><hr><p><strong>ifconfig -a</strong>          查看ip地址、端口等网络相关信息</p><h3 id><a href="#" class="headerlink" title=" "></a> </h3></body></html>]]></content>
+        <content type="html"><![CDATA[<html><head><link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script></head><body><h2 id="Linux-Ubuntu-操作指令"><a href="#Linux-Ubuntu-操作指令" class="headerlink" title="Linux(Ubuntu) 操作指令"></a>Linux(Ubuntu) 操作指令</h2><p>记录一下我自己在Linux下常用的操作指令，会一直更新。</p><h3 id="Python环境、库安装"><a href="#Python环境、库安装" class="headerlink" title="Python环境、库安装"></a>Python环境、库安装</h3><p><strong>source activate HPEG_PT</strong>      激活虚拟环境</p><p> <strong>mkvirtualenv</strong>     创建虚拟环境</p><p><strong>conda create -n NEW_Nmae python=3.6</strong>      conda创建虚拟环境</p><p><strong>conda install pytorch=0.4.0 torchvision cudatoolkit=9.0 -c pytorch</strong>       安装pytorch</p><p><strong>pip install tensorflow-gpu==1.12</strong>  安装任意版本tensorflow</p><p><strong>pip install -i <a href="https://pypi.tuna.tsinghua.edu.cn/simple" target="_blank" rel="noopener">https://pypi.tuna.tsinghua.edu.cn/simple</a> numpy(指定的库)</strong>    pip使用清华镜像安装库，不能翻墙可提高下载速度</p><hr><h3 id="程序监控、进程"><a href="#程序监控、进程" class="headerlink" title="程序监控、进程"></a>程序监控、进程</h3><p><strong>htop F4 f9 9 Enter</strong>   杀死某个指定进程</p><ul><li>htop 打开任务监视器</li></ul><p><strong>watch -n 1 nvidia-smi</strong>          查看显卡使用情况，每隔一秒刷新一次情况</p><p> <strong>nohup python -u train.py &>nohup.out&</strong>  命令调到后台执行，并且输出信息写到<code>nohup.out</code>文件中，这个很有用，操作服务器时本地窗口可以关掉不影响服务器运行</p><h3 id="Net-网络相关"><a href="#Net-网络相关" class="headerlink" title="Net 网络相关"></a>Net 网络相关</h3><hr><p><strong>ifconfig -a</strong>          查看ip地址、端口等网络相关信息</p><p><strong>ssh jion@1.tcp.cpolar.cn -p 20279</strong>  ssh远程连接 ssh username@ip -p(端口)</p></body></html>]]></content>
       
       
       <categories>
