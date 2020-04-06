@@ -4,6 +4,33 @@
   
     
     <entry>
+      <title>最小二乘法和梯度下降法</title>
+      <link href="/2020/04/07/%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98%E6%B3%95%E5%92%8C%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95/"/>
+      <url>/2020/04/07/%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98%E6%B3%95%E5%92%8C%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95/</url>
+      
+        <content type="html"><![CDATA[<html><head><link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script></head><body><p>最小二乘法是用来最小化误差函数从而寻找函数得最佳参数的一种方法，学习的时候最小二乘法与梯度下降法我感觉很类似，所以来记录一下。</p><p>参考文章：<a href="https://zhuanlan.zhihu.com/p/109986821" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/109986821</a></p><h2 id="最小二乘法推导"><a href="#最小二乘法推导" class="headerlink" title="最小二乘法推导"></a>最小二乘法推导</h2><p>首先，<strong>一元线性回归</strong>的最小二乘法推导比较容易，上述知乎也有链接，这里直接给出结论：</p><script type="math/tex; mode=display">y = Wx + b \\x = {x_1,x_2,...x_m}\\</script><script type="math/tex; mode=display">\begin{cases}W = \frac{\sum_{i=1}^m(x_i-\bar{x})*(y_i-\bar{y})}{\sum_{i=1}^m(x_i-\bar{x})^2}\\b = \bar{y} - W*\bar{x}\end{cases}</script><p>对于<strong>多元线性回归</strong>，采用矩阵求解：同样直接给出结论</p><script type="math/tex; mode=display">y = X\beta</script><p><a href="https://user-images.githubusercontent.com/60562661/78578352-fbce8d00-7861-11ea-81fd-9b29e9efec21.png" data-fancybox="group" data-caption="1586188084270" class="fancybox"><img alt="1586188084270" style="zoom:80%;" title="1586188084270" data-src="https://user-images.githubusercontent.com/60562661/78578352-fbce8d00-7861-11ea-81fd-9b29e9efec21.png" class="lazyload"></a></p><p><a href="https://user-images.githubusercontent.com/60562661/78578356-fd985080-7861-11ea-84e4-d520251026bb.png" data-fancybox="group" data-caption="1586188119187" class="fancybox"><img alt="1586188119187" style="zoom:80%;" title="1586188119187" data-src="https://user-images.githubusercontent.com/60562661/78578356-fd985080-7861-11ea-84e4-d520251026bb.png" class="lazyload"></a></p><h2 id="两者区别"><a href="#两者区别" class="headerlink" title="两者区别"></a>两者区别</h2><p>由上述可以看出，</p><p><strong>最小二乘法：</strong></p><ul><li>可以直接求矩阵求逆一步到位，求出所的参数，求的全局最优解，无需迭代；</li><li>但是只适用于线性回归模型，并且矩阵复杂时计算复杂度高</li></ul><p><strong>梯度下降法：</strong></p><ul><li>需要设置学习率进行一步步迭代，求得局部最小值或者是全局最优解</li><li>适用于任何模型，只要是凸函数均可以求求出解</li></ul><h2 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h2><p>这里想起来分类为什么不适合用最小二乘法求解？</p><p><strong>最小二乘法<code>(y-y-true)^2</code>有个平方，对于离群的点平方会很致命，尽量拟合数据就会导致错误出现</strong></p><hr><p><strong>2020年4月7日夜</strong></p></body></html>]]></content>
+      
+      
+      <categories>
+          
+          <category> 技术 </category>
+          
+          <category> 深度学习 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 最小二乘法 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>数学中的李群初探</title>
       <link href="/2020/04/01/%E6%95%B0%E5%AD%A6%E4%B8%AD%E7%9A%84%E6%9D%8E%E7%BE%A4%E5%88%9D%E6%8E%A2/"/>
       <url>/2020/04/01/%E6%95%B0%E5%AD%A6%E4%B8%AD%E7%9A%84%E6%9D%8E%E7%BE%A4%E5%88%9D%E6%8E%A2/</url>
