@@ -4,6 +4,60 @@
   
     
     <entry>
+      <title>牛顿法</title>
+      <link href="/2020/04/08/%E7%89%9B%E9%A1%BF%E6%B3%95/"/>
+      <url>/2020/04/08/%E7%89%9B%E9%A1%BF%E6%B3%95/</url>
+      
+        <content type="html"><![CDATA[<html><head><link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script></head><body><p>牛顿法一般有两个用途：方程求根；最优化。</p><h2 id="求根问题"><a href="#求根问题" class="headerlink" title="求根问题"></a>求根问题</h2><p>对于高次方程，求根公式要么没有要么就很复杂，此时可以用牛顿法来求解。首先根据泰勒公式，把f(x)在x0出展开到一阶（<strong>随机取一个x0求f(x)</strong>）：</p><script type="math/tex; mode=display">f(x) = f(x_0) + f'(x_0)(x-x_0)</script><p>令f(x) = 0得：</p><script type="math/tex; mode=display">x = x_0 - \frac{f(x_0)}{f'(x_0)} = x_1</script><p>由于f(x)用泰勒公式展开到一阶，严格意义上展开式并不相等，只是可以说<strong>f(x_1)比f(x_0)更接近0</strong> 而已，由此迭代便自然而然了:</p><script type="math/tex; mode=display">x_{n+1} = x_n - f(x_n) / f'(x_n)</script><p>通过迭代，必然可以在<code>f(x*) = 0</code> ,x=x*时收敛。也就是求出了根。</p><p>把上面得泰勒公式展开求解迭代过程在几何表示如下图：</p><p><a href="https://user-images.githubusercontent.com/60562661/78808595-3ff39600-79f8-11ea-900e-3b95acbc690a.jpg" data-fancybox="group" data-caption="img" class="fancybox"><img alt="img" title="img" data-src="https://user-images.githubusercontent.com/60562661/78808595-3ff39600-79f8-11ea-900e-3b95acbc690a.jpg" class="lazyload"></a></p><p>这也是牛顿法的基本原理。</p><h2 id="优化问题"><a href="#优化问题" class="headerlink" title="优化问题"></a>优化问题</h2><h3 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h3><p><strong>海塞矩阵</strong>：是一个由多变量<a href="https://link.zhihu.com/?target=https%3A//zh.wikipedia.org/wiki/%E5%AE%9E%E5%87%BD%E6%95%B0">实值函数</a>的所有二阶<a href="https://link.zhihu.com/?target=https%3A//zh.wikipedia.org/wiki/%E5%81%8F%E5%AF%BC%E6%95%B0">偏导数</a>组成的<a href="https://link.zhihu.com/?target=https%3A//zh.wikipedia.org/wiki/%E6%96%B9%E5%9D%97%E7%9F%A9%E9%98%B5">方块矩阵</a>。</p><p>使用下标记号表示为：</p><script type="math/tex; mode=display">H_{ij} = \frac{\partial^2f}{\partial_{xi}\partial_{xj}}</script><p><strong>泰勒展开与海塞矩阵：</strong></p><p><a href="https://user-images.githubusercontent.com/60562661/78808590-3d913c00-79f8-11ea-955a-1a0e95dee6da.png" data-fancybox="group" data-caption="1586361820642" class="fancybox"><img alt="1586361820642" title="1586361820642" data-src="https://user-images.githubusercontent.com/60562661/78808590-3d913c00-79f8-11ea-955a-1a0e95dee6da.png" class="lazyload"></a></p><h3 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h3><p><a href="C:\Users\33196\AppData\Roaming\Typora\typora-user-images\1586361971718.png" data-fancybox="group" data-caption="1586361971718" class="fancybox"><img alt="1586361971718" title="1586361971718" data-src="C:\Users\33196\AppData\Roaming\Typora\typora-user-images\1586361971718.png" class="lazyload"></a></p><p>这就是牛顿法更新的公式。此时下降最快的方向就是 <code>海塞矩阵逆矩阵 * 梯度</code></p><h2 id="思考梯度下降法与牛顿法"><a href="#思考梯度下降法与牛顿法" class="headerlink" title="思考梯度下降法与牛顿法"></a>思考梯度下降法与牛顿法</h2><h3 id="收敛情况"><a href="#收敛情况" class="headerlink" title="收敛情况"></a>收敛情况</h3><p>由求根迭代可以看出，牛顿法显然收敛速度比较快。</p><ul><li>牛顿法采用二阶海塞矩阵逆矩阵求解</li><li>梯度下降法采用梯度求解</li></ul><p>通俗来说，二阶比一阶收敛更快，因为采用二阶逆矩阵求解，不仅考虑了梯度，也考虑了下一步的梯度，看得更远，所以收敛更快。<strong>（来自知乎）</strong></p><h3 id="缺陷"><a href="#缺陷" class="headerlink" title="缺陷"></a>缺陷</h3><p>牛顿法既然比梯度下降法收敛快，那么为什么在深度学习中并未广泛应用，而是梯度下降法用的更多？原因大致如下：</p><ul><li>海塞矩阵难以求解，矩阵运算复杂度过高；</li><li>我认为比较可接受得原因是<strong>牛顿法不具有普适性</strong>， 用自己得应用范围，而深度学习数据量大且复杂，则更应该采用普适性方法</li></ul></body></html>]]></content>
+      
+      
+      <categories>
+          
+          <category> Math </category>
+          
+          <category> 优化算法 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 牛顿法 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>再探梯度下降法之梯度</title>
+      <link href="/2020/04/08/%E5%86%8D%E6%8E%A2%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95%E4%B9%8B%E6%A2%AF%E5%BA%A6/"/>
+      <url>/2020/04/08/%E5%86%8D%E6%8E%A2%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95%E4%B9%8B%E6%A2%AF%E5%BA%A6/</url>
+      
+        <content type="html"><![CDATA[<html><head><link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script></head><body><p>这里记录一下刚开始学比较疑惑的一个问题，就是梯度。</p><p>推荐一篇文章：<a href="https://www.zhihu.com/question/36301367/answer/142096153" target="_blank" rel="noopener">https://www.zhihu.com/question/36301367/answer/142096153</a></p><h2 id="Gradient"><a href="#Gradient" class="headerlink" title="Gradient"></a>Gradient</h2><p>梯度的来由这里就不细讲了，可以参考上述知乎文章。</p><p>首先梯度是一个向量，那么就有方向。梯度的方向就是函数变化最快的方向。</p><p><strong>函数变化最快的方向</strong>直观理解，就是随着自变量变化函数值变化最快。即：</p><p><code>w_new = w + w_deta</code>，此时函数值可能变大也可能变小，但是变化值不确定，当 w = w+g时，函数值就会增加最快。</p><hr><p><a href="https://user-images.githubusercontent.com/60562661/78803330-737ef200-79f1-11ea-89eb-41b51f5677d6.jpg" data-fancybox="group" data-caption class="fancybox"><img alt title data-src="https://user-images.githubusercontent.com/60562661/78803330-737ef200-79f1-11ea-89eb-41b51f5677d6.jpg" class="lazyload"></a></p></body></html>]]></content>
+      
+      
+      <categories>
+          
+          <category> 技术 </category>
+          
+          <category> 深度学习 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 梯度下降法 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>最小二乘法和梯度下降法</title>
       <link href="/2020/04/07/%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98%E6%B3%95%E5%92%8C%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95/"/>
       <url>/2020/04/07/%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98%E6%B3%95%E5%92%8C%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95/</url>
