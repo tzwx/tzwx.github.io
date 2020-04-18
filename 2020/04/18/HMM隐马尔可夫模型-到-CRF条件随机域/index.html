@@ -1,0 +1,193 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5"><title>从 HMM隐马尔可夫模型 到 CRF条件随机域 | 所念皆星河</title><meta name="description" content="从 HMM隐马尔可夫模型 到 CRF条件随机域"><meta name="keywords" content="HMM,CRF"><meta name="author" content="桦七"><meta name="copyright" content="桦七"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="/img/hq.png"><link rel="preconnect" href="//cdn.jsdelivr.net"><link rel="preconnect" href="https://fonts.googleapis.com" crossorigin><link rel="preconnect" href="//busuanzi.ibruce.info"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="从 HMM隐马尔可夫模型 到 CRF条件随机域"><meta name="twitter:description" content="从 HMM隐马尔可夫模型 到 CRF条件随机域"><meta name="twitter:image" content="https://user-images.githubusercontent.com/60562661/79591055-948ac580-810a-11ea-88c7-3be0cf39054d.jpg"><meta property="og:type" content="article"><meta property="og:title" content="从 HMM隐马尔可夫模型 到 CRF条件随机域"><meta property="og:url" content="https://huaqi.blue/2020/04/18/HMM%E9%9A%90%E9%A9%AC%E5%B0%94%E5%8F%AF%E5%A4%AB%E6%A8%A1%E5%9E%8B-%E5%88%B0-CRF%E6%9D%A1%E4%BB%B6%E9%9A%8F%E6%9C%BA%E5%9F%9F/"><meta property="og:site_name" content="所念皆星河"><meta property="og:description" content="从 HMM隐马尔可夫模型 到 CRF条件随机域"><meta property="og:image" content="https://user-images.githubusercontent.com/60562661/79591055-948ac580-810a-11ea-88c7-3be0cf39054d.jpg"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><script src="https://cdn.jsdelivr.net/npm/js-cookie/dist/js.cookie.min.js"></script><script>const autoChangeMode = 'false'
+var t = Cookies.get("theme");
+if (autoChangeMode == '1'){
+const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches
+const isLightMode = window.matchMedia("(prefers-color-scheme: light)").matches
+const isNotSpecified = window.matchMedia("(prefers-color-scheme: no-preference)").matches
+const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+if (t === undefined){
+  if (isLightMode) activateLightMode()
+  else if (isDarkMode) activateDarkMode()
+  else if (isNotSpecified || hasNoSupport){
+    console.log('You specified no preference for a color scheme or your browser does not support it. I Schedule dark mode during night time.')
+    now = new Date();
+    hour = now.getHours();
+    isNight = hour < 6 || hour >= 18
+    isNight ? activateDarkMode() : activateLightMode()
+}
+} else if (t == 'light') activateLightMode()
+else activateDarkMode()
+
+
+} else if (autoChangeMode == '2'){
+  now = new Date();
+  hour = now.getHours();
+  isNight = hour < 6 || hour >= 18
+  if(t === undefined) isNight? activateDarkMode() : activateLightMode()
+  else if (t === 'light') activateLightMode()
+  else activateDarkMode() 
+} else {
+  if ( t == 'dark' ) activateDarkMode()
+  else if ( t == 'light') activateLightMode()
+}
+
+function activateDarkMode(){
+  document.documentElement.setAttribute('data-theme', 'dark')
+  if (document.querySelector('meta[name="theme-color"]') !== null){
+    document.querySelector('meta[name="theme-color"]').setAttribute('content','#000')
+  }
+}
+function activateLightMode(){
+  document.documentElement.setAttribute('data-theme', 'light')
+  if (document.querySelector('meta[name="theme-color"]') !== null){
+  document.querySelector('meta[name="theme-color"]').setAttribute('content','#fff')
+  }
+}</script><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="canonical" href="https://huaqi.blue/2020/04/18/HMM%E9%9A%90%E9%A9%AC%E5%B0%94%E5%8F%AF%E5%A4%AB%E6%A8%A1%E5%9E%8B-%E5%88%B0-CRF%E6%9D%A1%E4%BB%B6%E9%9A%8F%E6%9C%BA%E5%9F%9F/"><link rel="next" title="机器学习中判别式模型和生成式模型" href="https://huaqi.blue/2020/04/18/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%B8%AD%E5%88%A4%E5%88%AB%E5%BC%8F%E6%A8%A1%E5%9E%8B%E5%92%8C%E7%94%9F%E6%88%90%E5%BC%8F%E6%A8%A1%E5%9E%8B/"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"We didn't find any results for the search: ${query}"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"cookieDomain":"https://huaqi.blue/","msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简"},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  bookmark: {
+    title: 'Snackbar.bookmark.title',
+    message_prev: 'Press',
+    message_next: 'to bookmark this page'
+  },
+  runtime_unit: 'days',
+  runtime: true,
+  copyright: {"languages":{"author":"Author: 桦七","link":"Link: https://huaqi.blue/2020/04/18/HMM%E9%9A%90%E9%A9%AC%E5%B0%94%E5%8F%AF%E5%A4%AB%E6%A8%A1%E5%9E%8B-%E5%88%B0-CRF%E6%9D%A1%E4%BB%B6%E9%9A%8F%E6%9C%BA%E5%9F%9F/","source":"Source: 所念皆星河","info":"Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source."}},
+  ClickShowText: undefined,
+  medium_zoom: false,
+  fancybox: true,
+  Snackbar: undefined,
+  baiduPush: false,
+  isHome: false,
+  isPost: true
+  
+}</script><meta name="generator" content="Hexo 4.2.0"></head><body><header> <div id="page-header"><span class="pull_left" id="blog_name"><a class="blog_title" id="site-name" href="/">所念皆星河</a></span><span class="toggle-menu pull_right close"><a class="site-page"><i class="fa fa-bars fa-fw" aria-hidden="true"></i></a></span><span class="pull_right menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> About</span></a></div><div class="menus_item"><a class="site-page" href="/gallery/"><i class="fa-fw fa fa-picture-o"></i><span> Gallery</span></a></div><div class="menus_item"><a class="site-page"><i class="fa-fw fa fa-list" aria-hidden="true"></i><span> Life</span><i class="fa fa-chevron-down menus-expand" aria-hidden="true"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fa fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fa fa-film"></i><span> Movie</span></a></li></ul></div></div></span><span class="pull_right" id="search_button"><a class="site-page social-icon search"><i class="fa fa-search fa-fw"></i><span> Search</span></a></span></div></header><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="https://user-images.githubusercontent.com/60562661/77299936-3693d980-6d28-11ea-9c47-25de13ba1713.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">Articles</div><div class="length_num">56</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">Tags</div><div class="length_num">58</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">Categories</div><div class="length_num">18</div></a></div></div></div><hr><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> About</span></a></div><div class="menus_item"><a class="site-page" href="/gallery/"><i class="fa-fw fa fa-picture-o"></i><span> Gallery</span></a></div><div class="menus_item"><a class="site-page"><i class="fa-fw fa fa-list" aria-hidden="true"></i><span> Life</span><i class="fa fa-chevron-down menus-expand" aria-hidden="true"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fa fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fa fa-film"></i><span> Movie</span></a></li></ul></div></div></div><div id="mobile-sidebar-toc"><div class="toc_mobile_headline">Catalog</div><div class="sidebar-toc__content"><ol class="toc_mobile_items"><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#HMM"><span class="toc_mobile_items-number">1.</span> <span class="toc_mobile_items-text">HMM</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#整体分析"><span class="toc_mobile_items-number">1.1.</span> <span class="toc_mobile_items-text">整体分析</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#层层深入"><span class="toc_mobile_items-number">1.2.</span> <span class="toc_mobile_items-text">层层深入</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#缺陷"><span class="toc_mobile_items-number">1.3.</span> <span class="toc_mobile_items-text">缺陷</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#Condition-Random-Field-条件随机域"><span class="toc_mobile_items-number">2.</span> <span class="toc_mobile_items-text">Condition Random Field 条件随机域</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#由HMM到CRF"><span class="toc_mobile_items-number">2.1.</span> <span class="toc_mobile_items-text">由HMM到CRF</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#Training"><span class="toc_mobile_items-number">2.2.</span> <span class="toc_mobile_items-text">Training</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#CRF与HMM"><span class="toc_mobile_items-number">3.</span> <span class="toc_mobile_items-text">CRF与HMM</span></a></li></ol></div></div></div><div id="body-wrap"><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true">     </i><div class="auto_open" id="sidebar"><div class="sidebar-toc"><div class="sidebar-toc__title">Catalog</div><div class="sidebar-toc__progress"><span class="progress-notice">You've read</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#HMM"><span class="toc-number">1.</span> <span class="toc-text">HMM</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#整体分析"><span class="toc-number">1.1.</span> <span class="toc-text">整体分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#层层深入"><span class="toc-number">1.2.</span> <span class="toc-text">层层深入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#缺陷"><span class="toc-number">1.3.</span> <span class="toc-text">缺陷</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Condition-Random-Field-条件随机域"><span class="toc-number">2.</span> <span class="toc-text">Condition Random Field 条件随机域</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#由HMM到CRF"><span class="toc-number">2.1.</span> <span class="toc-text">由HMM到CRF</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Training"><span class="toc-number">2.2.</span> <span class="toc-text">Training</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CRF与HMM"><span class="toc-number">3.</span> <span class="toc-text">CRF与HMM</span></a></li></ol></div></div></div><main id="content-outer"><div id="top-container" style="background-image: url(https://user-images.githubusercontent.com/60562661/79591055-948ac580-810a-11ea-88c7-3be0cf39054d.jpg)"><div id="post-info"><div id="post-title"><div class="posttitle">从 HMM隐马尔可夫模型 到 CRF条件随机域</div></div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> Created 2020-04-18<span class="post-meta__separator">|</span><i class="fa fa-history fa-fw" aria-hidden="true"></i> Updated 2020-04-18</time><span class="post-meta__separator">|</span><span><i class="fa fa-inbox post-meta__icon fa-fw" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a><i class="fa fa-angle-right fa-fw" aria-hidden="true"></i><i class="fa fa-inbox post-meta__icon fa-fw" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/%E6%8A%80%E6%9C%AF/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a></span><div class="post-meta-wordcount"><i class="fa fa-file-word-o post-meta__icon fa-fw" aria-hidden="true"></i><span>Word count:</span><span class="word-count">1.1k</span><span class="post-meta__separator">|</span><i class="fa fa-clock-o post-meta__icon fa-fw" aria-hidden="true"></i><span>Reading time: 4 min</span><div class="post-meta-pv-cv"><span class="post-meta__separator">|</span><span><i class="fa fa-eye post-meta__icon fa-fw" aria-hidden="true"> </i>Post View:</span><span id="busuanzi_value_page_pv"></span><span class="post-meta__separator">|</span><i class="fa fa-comments-o post-meta__icon fa-fw" aria-hidden="true"></i><span>comments:</span><a href="/2020/04/18/HMM%E9%9A%90%E9%A9%AC%E5%B0%94%E5%8F%AF%E5%A4%AB%E6%A8%A1%E5%9E%8B-%E5%88%B0-CRF%E6%9D%A1%E4%BB%B6%E9%9A%8F%E6%9C%BA%E5%9F%9F/#post-comment" itemprop="discussionUrl"><span class="valine-comment-count comment-count" data-xid="/2020/04/18/HMM%E9%9A%90%E9%A9%AC%E5%B0%94%E5%8F%AF%E5%A4%AB%E6%A8%A1%E5%9E%8B-%E5%88%B0-CRF%E6%9D%A1%E4%BB%B6%E9%9A%8F%E6%9C%BA%E5%9F%9F/" itemprop="commentCount"></span></a></div></div></div></div></div><div class="layout layout_post" id="content-inner">   <article id="post"><div class="article-container" id="post-content"><html><head></head><body><p>李宏毅老师课程：<a href="https://www.bilibili.com/video/av82565851/" target="_blank" rel="noopener">https://www.bilibili.com/video/av82565851/</a></p>
+<p>知乎文章：<a href="https://zhuanlan.zhihu.com/p/70067113" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/70067113</a></p>
+<h2 id="HMM"><a href="#HMM" class="headerlink" title="HMM"></a>HMM</h2><h3 id="整体分析"><a href="#整体分析" class="headerlink" title="整体分析"></a>整体分析</h3><p>以词性标注为例，从问题入手，输入<strong>X（word）</strong>，输出<strong>Y(tag)</strong> ，这里的词性Y是<code>Hidden</code>隐藏的,X是可观测到的<code>Observed</code>。</p>
+<p>隐马尔可夫链模型（HMM），着手于建模<code>P(X,Y)</code>即两个序列的联合概率（可以看出来是生成式模型），有条件概率转为联合概率过程如下：</p>
+<script type="math/tex; mode=display">
+y = argmax_yP(y|x) \\
+ \space= argmax_y{\frac {P(x,y)}{P(x)}} \\
+  \space= argmax_yP(x,y)</script><p>目前为题转化为 <strong>穷举所有的y，使得<code>P(x,y)</code>最大。</strong></p>
+<p>这里直接计算复杂度会很大 ，所以采用<code>维特比算法</code> 可以求解出这个问题，并且复杂度不是很高。</p>
+<hr>
+<h3 id="层层深入"><a href="#层层深入" class="headerlink" title="层层深入"></a>层层深入</h3><p>这里的P(x,y)如何求解呢？</p>
+<script type="math/tex; mode=display">
+P(x,y) = P(x|y)*P(y) \\
+\space =\prod_{i=1}^NP(x_i|y_i)*\prod_{i=1}^{N}P(y_i|y_{i-1})</script><p>其中，</p>
+<ul>
+<li><p>第一项条件概率称为<strong>发射概率</strong>，指从一个词性中抽到某个单词的概率，它基于<strong>观测独立性假设</strong>，即假设任意时刻的观测只依赖于该时刻的马尔可夫链的状态，与其他观测及状态无关。</p>
+<p><a href="https://user-images.githubusercontent.com/60562661/79639405-33242e80-81be-11ea-8a66-65045d0690a9.png" target="_blank" rel="noopener" data-fancybox="group" data-caption="1587209079787" class="fancybox"><img alt="1587209079787" title="1587209079787" data-src="https://user-images.githubusercontent.com/60562661/79639405-33242e80-81be-11ea-8a66-65045d0690a9.png" class="lazyload"></a></p>
+</li>
+<li><p>第二项则是由<strong><a href="https://huaqi.blue/2020/04/18/%E9%A9%AC%E5%B0%94%E5%8F%AF%E5%A4%AB%E9%93%BE-Markov-Chain/">马尔可夫假设</a></strong>得到，如下图：</p>
+</li>
+</ul>
+<p><a href="https://user-images.githubusercontent.com/60562661/79639402-315a6b00-81be-11ea-9ec9-7915395dc030.png" target="_blank" rel="noopener" data-fancybox="group" data-caption="1587209050077" class="fancybox"><img alt="1587209050077" title="1587209050077" data-src="https://user-images.githubusercontent.com/60562661/79639402-315a6b00-81be-11ea-9ec9-7915395dc030.png" class="lazyload"></a></p>
+<p>即马尔可夫最终学习的就是<code>发射概率矩阵(x*y)</code>和·<code>转移概率矩阵(y*y)</code>,对应起来就是 当前词性产生下一个词性的概率；从当前词性中选出某个词的概率。</p>
+<hr>
+<h3 id="缺陷"><a href="#缺陷" class="headerlink" title="缺陷"></a>缺陷</h3><p>求解时，目标是：</p>
+<script type="math/tex; mode=display">
+P(x,\hat y) > P(x,y)</script><p>即真实概率大于预测概率，但是HMM并不会保证这一点。</p>
+<p>故HMM存在的一个缺陷是会<code>脑补很多东西</code>，具体可以看李宏毅老师视频。脑部在数据不充分时比较好，但是数据量大依然会凭空捏造，这样效果就不太好。</p>
+<h2 id="Condition-Random-Field-条件随机域"><a href="#Condition-Random-Field-条件随机域" class="headerlink" title="Condition Random Field 条件随机域"></a>Condition Random Field 条件随机域</h2><h3 id="由HMM到CRF"><a href="#由HMM到CRF" class="headerlink" title="由HMM到CRF"></a>由HMM到CRF</h3><p>在CRF中，</p>
+<script type="math/tex; mode=display">
+P(x,y) \approx \exp(W·\phi(x,y))</script><p>即这两项成正比，其中：</p>
+<ul>
+<li><strong>W</strong>是权重向量，从训练数据中学得</li>
+<li>Φ(x,y) 是一个特征向量</li>
+<li>exp()由于不能保证小于1，故是正比于</li>
+</ul>
+<p>依然从问题入手，输入X输出Y，求最大化的P(Y|X)：</p>
+<script type="math/tex; mode=display">
+P(y|x) = \frac {P(x,y)}{P(x)} = \frac {P(x,y)}{\sum_{y'}P(x,y')}\\</script><p>由上述两者成正比可以推导得：</p>
+<script type="math/tex; mode=display">
+P(x,y) = \frac{\exp(W·\phi(x,y))}{R}</script><p>故：</p>
+<script type="math/tex; mode=display">
+P(y|x) =\frac {P(x,y)}{\sum_{y'}P(x,y')}\\
+=\frac{\exp(W·\phi(x,y))}{R} * \frac{R}{\sum_{y'}\exp(W·\phi(x,y'))}
+= \frac{\exp(W·\phi(x,y))}{\sum_{y'}\exp(W·\phi(x,y'))}</script><p><strong>现在问题来了，为什么P(x,y)可以写成后面那一项？······具体推导省略，过程可以看李宏毅老师视频</strong></p>
+<p><a href="https://user-images.githubusercontent.com/60562661/79639406-34555b80-81be-11ea-9d97-8e825f62671e.png" target="_blank" rel="noopener" data-fancybox="group" data-caption="1587214233709" class="fancybox"><img alt="1587214233709" title="1587214233709" data-src="https://user-images.githubusercontent.com/60562661/79639406-34555b80-81be-11ea-9d97-8e825f62671e.png" class="lazyload"></a></p>
+<p>其中，</p>
+<ul>
+<li>权重向量<strong>W</strong>可以对应为HMM中计算的概率取log</li>
+<li>Ns,t(x,y)则是这一对出现的次数，记作Φ(z,y)</li>
+</ul>
+<p>Φ(x,y)特征向量由两部分组成，<code>一部分是词性产生词性的pair的次数，另一部分是词性中产生相应词汇的次数，</code>形状如下：</p>
+<p><a href="https://user-images.githubusercontent.com/60562661/79639408-361f1f00-81be-11ea-9d91-d5b9fbd6052a.png" target="_blank" rel="noopener" data-fancybox="group" data-caption="1587214519278" class="fancybox"><img alt="1587214519278" style="zoom: 80%;" title="1587214519278" data-src="https://user-images.githubusercontent.com/60562661/79639408-361f1f00-81be-11ea-9d91-d5b9fbd6052a.png" class="lazyload"></a></p>
+<p><a href="https://user-images.githubusercontent.com/60562661/79639411-37504c00-81be-11ea-910c-db843615e2ea.png" target="_blank" rel="noopener" data-fancybox="group" data-caption="1587214625067" class="fancybox"><img alt="1587214625067" style="zoom: 80%;" title="1587214625067" data-src="https://user-images.githubusercontent.com/60562661/79639411-37504c00-81be-11ea-910c-db843615e2ea.png" class="lazyload"></a></p>
+<hr>
+<h3 id="Training"><a href="#Training" class="headerlink" title="Training"></a>Training</h3><p>上述特征向量<strong>Φ可以自定义</strong>，故要求的参数即为<strong>权重w</strong>，即：</p>
+<script type="math/tex; mode=display">
+W^* = \arg max_wO(w)</script><p>其中，对象方程为：</p>
+<script type="math/tex; mode=display">
+O(w) = \sum_{n=1}^N\log P(\hat y_n|x_n)</script><p>其中：</p>
+<script type="math/tex; mode=display">
+\log P(\hat y_n|x_n) = \log P(x_n,\hat y_n) - \log {\sum_{y'}P(x_n,y')}</script><p>所以目标就是最大化上述公式的前一项，最小化上述公式后一项。而前一项是观测出现的概率，后一项是没有观测到即随机组合出现的概率，这在直观上也是正确的。</p>
+<p>然后采用梯度下降法来求解：</p>
+<p><a href="https://user-images.githubusercontent.com/60562661/79639412-38817900-81be-11ea-831d-847fd366c8f3.png" target="_blank" rel="noopener" data-fancybox="group" data-caption="1587215759813" class="fancybox"><img alt="1587215759813" title="1587215759813" data-src="https://user-images.githubusercontent.com/60562661/79639412-38817900-81be-11ea-831d-847fd366c8f3.png" class="lazyload"></a></p>
+<p>即：</p>
+<script type="math/tex; mode=display">
+\Delta O(W) = \phi(x_n,y_n) - \sum_{y'}P(y'|x_n)\phi(x_n,y')</script><p>由于是最大化所以采用 <strong>Stochastic Gradient Ascent</strong> 更新参数：</p>
+<script type="math/tex; mode=display">
+w = w + \eta(\phi(x_n,y_n) - \sum_{y'}P(y'|x_n)\phi(x_n,y'))</script><p>在Inference时，</p>
+<script type="math/tex; mode=display">
+y = argmax_yP(y|x) \\
+ \space= \arg max_y{\frac {P(x,y)}{P(x)}} \\
+  \space= \arg max_yP(x,y)\\
+ \space= \arg max_y\exp(W·\phi(x,y))= \arg max_yW·\phi(x,y)</script><h2 id="CRF与HMM"><a href="#CRF与HMM" class="headerlink" title="CRF与HMM"></a>CRF与HMM</h2><p>CRF在增加标签对出现的概率的同时，<strong>也减小了其他随意组合的对出现的概率</strong>，这就抑制了HMM容易脑补的问题。</p>
+<p>HMM是生成式模型，最终在求解联合概率；</p>
+<p>CRF实际上是判别式模型，从Inference可以看出，是直接求出了条件概率。</p>
+</body></html></div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">桦七</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://huaqi.blue/2020/04/18/HMM%E9%9A%90%E9%A9%AC%E5%B0%94%E5%8F%AF%E5%A4%AB%E6%A8%A1%E5%9E%8B-%E5%88%B0-CRF%E6%9D%A1%E4%BB%B6%E9%9A%8F%E6%9C%BA%E5%9F%9F/">https://huaqi.blue/2020/04/18/HMM%E9%9A%90%E9%A9%AC%E5%B0%94%E5%8F%AF%E5%A4%AB%E6%A8%A1%E5%9E%8B-%E5%88%B0-CRF%E6%9D%A1%E4%BB%B6%E9%9A%8F%E6%9C%BA%E5%9F%9F/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/HMM/">HMM    </a><a class="post-meta__tags" href="/tags/CRF/">CRF    </a></div><div class="post_share"><div class="social-share" data-image="https://user-images.githubusercontent.com/60562661/79591055-948ac580-810a-11ea-88c7-3be0cf39054d.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js"></script></div></div><div class="post-reward"><a class="reward-button button--primary button--animated"> <i class="fa fa-qrcode"></i> Donate<div class="reward-main"><ul class="reward-all"><li class="reward-item"><img class="lazyload post-qr-code__img" src="/img/wechat.jpg" alt="微信"><div class="post-qr-code__desc">微信</div></li><li class="reward-item"><img class="lazyload post-qr-code__img" src="/img/alipay.jpg" alt="支付寶"><div class="post-qr-code__desc">支付寶</div></li></ul></div></a></div><nav class="pagination_post" id="pagination"><div class="next-post pull-full"><a href="/2020/04/18/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%B8%AD%E5%88%A4%E5%88%AB%E5%BC%8F%E6%A8%A1%E5%9E%8B%E5%92%8C%E7%94%9F%E6%88%90%E5%BC%8F%E6%A8%A1%E5%9E%8B/"><img class="next_cover lazyload" data-src="https://user-images.githubusercontent.com/60562661/79593946-c7cf5380-810e-11ea-9796-c2ecb2e484ec.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="label">Next Post</div><div class="next_info"><span>机器学习中判别式模型和生成式模型</span></div></a></div></nav><hr><div id="post-comment"><div class="comment_headling"><i class="fa fa-comments fa-fw" aria-hidden="true"></i><span> Comment</span></div><div class="vcomment" id="vcomment"></div><script src="https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js"></script><script>var notify = true == true ? true : false;
+var verify = false == true ? true : false;
+var GUEST_INFO = ['nick','mail','link'];
+var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+  return GUEST_INFO.indexOf(item) > -1
+});
+guest_info = guest_info.length == 0 ? GUEST_INFO :guest_info;
+
+window.valine = new Valine({
+  el:'#vcomment',
+  notify:notify,
+  verify:verify,
+  appId:'s7Rhlvw79F57TPCoI7ybwiKJ-gzGzoHsz',
+  appKey:'oSBw1EY1n1eGhYK9f5jsdual',
+  placeholder:'留下你的足迹...',
+  avatar:'monsterid',
+  guest_info:guest_info,
+  pageSize:'10',
+  lang:'en',
+  recordIP: true
+});</script></div></div></main><footer id="footer" style="background-image: url(https://user-images.githubusercontent.com/60562661/79591055-948ac580-810a-11ea-88c7-3be0cf39054d.jpg)" data-type="photo"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2020 By 桦七</div><div class="framework-info"><span>Driven </span><a href="http://hexo.io" target="_blank" rel="noopener"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme </span><a href="https://github.com/jerryc127/hexo-theme-butterfly" target="_blank" rel="noopener"><span>Butterfly</span></a></div></div></footer></div><section class="rightside" id="rightside"><div id="rightside-config-hide"><i class="fa fa-book" id="readmode" title="Read Mode"></i><i class="fa fa-plus" id="font_plus" title="Increase font size"></i><i class="fa fa-minus" id="font_minus" title="Decrease font size"></i><a class="translate_chn_to_cht" id="translateLink" href="javascript:translatePage();" title="Traditional Chinese and Simplified Chinese Conversion" target="_self">繁</a><i class="darkmode fa fa-moon-o" id="darkmode" title="Dark Mode"></i></div><div id="rightside-config-show"><div id="rightside_config" title="Setting"><i class="fa fa-cog" aria-hidden="true"></i></div><a id="to_comment" href="#post-comment" title="Scroll to comment"><i class="scroll_to_comment fa fa-comments">  </i></a><i class="fa fa-list-ul close" id="mobile-toc-button" title="Table of Contents" aria-hidden="true"></i><i class="fa fa-arrow-up" id="go-up" title="Back to top" aria-hidden="true"></i></div></section><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  },
+  CommonHTML: {
+    linebreaks: { automatic: true, width: "90% container" }
+  },
+  "HTML-CSS": { 
+    linebreaks: { automatic: true, width: "90% container" }
+  },
+  "SVG": { 
+    linebreaks: { automatic: true, width: "90% container" }
+  }
+});
+</script><script type="text/x-mathjax-config">MathJax.Hub.Queue(function() {
+  var all = MathJax.Hub.getAllJax(), i;
+  for (i=0; i < all.length; i += 1) {
+    all[i].SourceElement().parentNode.className += ' has-jax';
+  }
+});
+</script><script src="https://cdn.jsdelivr.net/npm/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script id="canvas_nest" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/js/canvas-nest.js"></script><script src="https://cdn.jsdelivr.net/npm/activate-power-mode/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true; 
+document.body.addEventListener('input', POWERMODE);
+</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@latest/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/lazysizes@latest/lazysizes.min.js" async=""></script><div class="search-dialog" id="local-search"><div class="search-dialog__title" id="local-search-title">Local search</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="Search for Posts"></div></div></div><hr><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>Powered by</span> <a href="https://github.com/wzpan/hexo-generator-search" target="_blank" rel="noopener" style="color:#49B1F5;">hexo-generator-search</a></div></div></div><span class="search-close-button"><i class="fa fa-times"></i></span></div><div class="search-mask"></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"live2d-widget-model-hibiki"},"display":{"position":"right","width":150,"height":310},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body></html>
