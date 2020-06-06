@@ -4,6 +4,33 @@
   
     
     <entry>
+      <title>git错误与代理相关</title>
+      <link href="/2020/06/06/git%E9%94%99%E8%AF%AF%E4%B8%8E%E4%BB%A3%E7%90%86%E7%9B%B8%E5%85%B3/"/>
+      <url>/2020/06/06/git%E9%94%99%E8%AF%AF%E4%B8%8E%E4%BB%A3%E7%90%86%E7%9B%B8%E5%85%B3/</url>
+      
+        <content type="html"><![CDATA[<html><head><link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script></head><body><p>前一篇文章，我写到了git代理设置相关的东西,实际上应该根据自己的vpn选择开哪一种代理。<code>ssr</code>用sock5代理是可以的，但是<code>clash</code>就行不通，需要把git代理取消，然后设置成http代理。</p><p>代理的端口号要根据vpn来设置，并不是通用的。</p><p>我自己的git突然不能用，错误大致如下：</p><p><code>OpenSSL......Error443</code></p><p>解决如下：</p><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">bash</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">git config --global --<span class="built_in">unset</span> http.proxy</span><br><span class="line">git config --global --<span class="built_in">unset</span> https.proxy</span><br><span class="line"></span><br><span class="line"><span class="comment">#设置 http代理</span></span><br><span class="line">git config --global https.proxy http://127.0.0.1:根据vpn选择端口号</span><br><span class="line"></span><br><span class="line">git config --global https.proxy https://127.0.0.1:根据vpn选择端口号</span><br></pre></td></tr></tbody></table></figure></div><hr><p><code>Error 403  request denail</code></p><p>该错误表示登录错了账号，拒绝推送，我自己也是记混了git账号，所以出现了这个问题。</p><hr><p>另外，安利一款梯子：<code>Clash</code></p><ul><li>自动选择节点</li><li>界面舒适</li></ul></body></html>]]></content>
+      
+      
+      <categories>
+          
+          <category> 技术 </category>
+          
+          <category> Git </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> git </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Contrastive Loss (对比损失)分析</title>
       <link href="/2020/05/18/Contrastive-Loss-%E5%AF%B9%E6%AF%94%E6%8D%9F%E5%A4%B1-%E5%88%86%E6%9E%90/"/>
       <url>/2020/05/18/Contrastive-Loss-%E5%AF%B9%E6%AF%94%E6%8D%9F%E5%A4%B1-%E5%88%86%E6%9E%90/</url>
