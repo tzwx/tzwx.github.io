@@ -4,6 +4,60 @@
   
     
     <entry>
+      <title>Pytorch中的GPU调用</title>
+      <link href="/2020/06/16/Pytorch%E4%B8%AD%E7%9A%84GPU%E8%B0%83%E7%94%A8/"/>
+      <url>/2020/06/16/Pytorch%E4%B8%AD%E7%9A%84GPU%E8%B0%83%E7%94%A8/</url>
+      
+        <content type="html"><![CDATA[<html><head><link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script></head><body><p>一般用Pytorch编程训练模型肯定是要用GPU，多GPU有时候会一直出问题，这里记录一下。</p><h2 id="Pytorch用GPU计算"><a href="#Pytorch用GPU计算" class="headerlink" title="Pytorch用GPU计算"></a>Pytorch用GPU计算</h2><p>可以用Python的方法把程序发送到GPU：</p><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">python</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">os.environ[<span class="string">"CUDA_VISIBLE_DEVICES"</span>] = <span class="string">"2"</span> <span class="comment"># 用第三个显卡来计算</span></span><br><span class="line"> </span><br><span class="line">os.environ[<span class="string">"CUDA_VISIBLE_DEVICES"</span>] = <span class="string">"0，1，2"</span> <span class="comment"># 用第三个显卡来计算</span></span><br></pre></td></tr></tbody></table></figure></div><p>注意这种方法只能用到一张卡根据我的测试，不能并行计算，要并行计算的话需要一下代码：</p><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">python</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 用三张显卡并行的跑数据</span></span><br><span class="line">model_cuda = torch.nn.DataParallel(model.cuda(), device_ids=(<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>))</span><br><span class="line"><span class="comment"># batch_size的设置</span></span><br><span class="line">batch_size = origin_batch_size * len(cfg.GPUS)</span><br></pre></td></tr></tbody></table></figure></div><hr><p>注意，一般情况下不用<code>os.environ</code>的话，所有的初始张量、模型都会加载在显卡0，故此时如果0显卡被占满会一直提示<code>CUDA OUT OF MEMORY</code> 错误。</p></body></html>]]></content>
+      
+      
+      <categories>
+          
+          <category> 技术 </category>
+          
+          <category> Pytorch </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> pytorch编程 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Pytorch加载部分模型参数</title>
+      <link href="/2020/06/16/Pytorch%E5%8A%A0%E8%BD%BD%E9%83%A8%E5%88%86%E6%A8%A1%E5%9E%8B%E5%8F%82%E6%95%B0/"/>
+      <url>/2020/06/16/Pytorch%E5%8A%A0%E8%BD%BD%E9%83%A8%E5%88%86%E6%A8%A1%E5%9E%8B%E5%8F%82%E6%95%B0/</url>
+      
+        <content type="html"><![CDATA[<html><head><link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script></head><body><h2 id="Pytroch模型的加载"><a href="#Pytroch模型的加载" class="headerlink" title="Pytroch模型的加载"></a>Pytroch模型的加载</h2><p><code>Pytorch</code> 模型的加载流程：</p><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">python</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">model = HRNet() <span class="comment"># init model</span></span><br><span class="line">model_file = <span class="string">'state_8.pth'</span> </span><br><span class="line">checkpoint_dict = torch.load(model_state_file) <span class="comment"># load model file</span></span><br><span class="line">model.load_state_dict(checkpoint_dict) <span class="comment"># load parameters</span></span><br><span class="line">model.cuda()</span><br><span class="line">out = model(input) <span class="comment"># calculate results</span></span><br></pre></td></tr></tbody></table></figure></div><p>这样加载模型一般用于测试，会加载模型的所有参数，但是如果需要加载某一层的参数就行不通了，需要后续操作。</p><hr><h2 id="Pytorch模型部分参数加载"><a href="#Pytorch模型部分参数加载" class="headerlink" title="Pytorch模型部分参数加载"></a>Pytorch模型部分参数加载</h2><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">python</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">model_file = <span class="string">'state_8.pth'</span> </span><br><span class="line"><span class="keyword">if</span> os.path.exists(model_feature):</span><br><span class="line">pre_dict = torch.load(model_feature)</span><br><span class="line">pre_dict = pre_dict[<span class="string">'state_dict'</span>] <span class="comment"># 这里与模型的保存有关系，['state_dict']表示参数</span></span><br><span class="line">need_param = {} <span class="comment"># 待加载的参数集合</span></span><br><span class="line"><span class="keyword">for</span> name,m <span class="keyword">in</span> pre_dict.items(): <span class="comment"># name为参数名称， m为参数</span></span><br><span class="line">    <span class="keyword">if</span> name.split(<span class="string">'.'</span>)[<span class="number">0</span>] == <span class="string">'feature_global'</span>: <span class="comment"># 找到名称为feature_global的层加载</span></span><br><span class="line">     need_param[name] = m</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 加载过滤后的model  strict表示不需要一一对应，找到对应的加载即可</span></span><br><span class="line">        self.load_state_dict(need_param,strict=<span class="literal">False</span>)</span><br></pre></td></tr></tbody></table></figure></div><p>总结来说，就是根据层名称来过滤，这里有一个trick就是可以把自己需要改的模型层写到容器<code>nn.Sequence()</code>就可以批量加载，例如上述<code>feature_global</code>:</p><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">python</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">self.feature_global = nn.Sequential(</span><br><span class="line">            nn.Conv2d(<span class="number">256</span>, <span class="number">512</span>, <span class="number">6</span>, <span class="number">2</span>),</span><br><span class="line">            nn.BatchNorm2d(<span class="number">512</span>),</span><br><span class="line">            nn.MaxPool2d(<span class="number">3</span>, <span class="number">2</span>),</span><br><span class="line">            nn.ReLU(inplace=<span class="literal">True</span>),</span><br><span class="line">            nn.Conv2d(<span class="number">512</span>, <span class="number">384</span>, <span class="number">3</span>, <span class="number">1</span>),</span><br><span class="line">            nn.BatchNorm2d(<span class="number">384</span>),</span><br><span class="line">            nn.ReLU(inplace=<span class="literal">True</span>),</span><br><span class="line">            nn.Conv2d(<span class="number">384</span>, <span class="number">384</span>, <span class="number">3</span>, <span class="number">1</span>),</span><br><span class="line">            nn.BatchNorm2d(<span class="number">384</span>),</span><br><span class="line">            nn.ReLU(inplace=<span class="literal">True</span>),</span><br><span class="line">            nn.Conv2d(<span class="number">384</span>, <span class="number">256</span>, <span class="number">3</span>, <span class="number">1</span>),</span><br><span class="line">            nn.BatchNorm2d(<span class="number">256</span>),</span><br><span class="line">            nn.ReLU(inplace=<span class="literal">True</span>),</span><br><span class="line">            nn.Conv2d(<span class="number">256</span>, <span class="number">256</span>, <span class="number">3</span>, <span class="number">1</span>))</span><br></pre></td></tr></tbody></table></figure></div><p>这样便可加载任意层参数，根据层名称加载就有个要求<strong>不能重名</strong>。</p><hr><p>以上就是Pytorch模型的加载，后续有其他问题再更新。</p></body></html>]]></content>
+      
+      
+      <categories>
+          
+          <category> 技术 </category>
+          
+          <category> Pytorch </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> pytorch编程 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>PyTorch参数的初始化与冻结部分参数训练</title>
       <link href="/2020/06/09/PyTorch%E5%86%BB%E7%BB%93%E9%83%A8%E5%88%86%E5%8F%82%E6%95%B0%E8%AE%AD%E7%BB%83/"/>
       <url>/2020/06/09/PyTorch%E5%86%BB%E7%BB%93%E9%83%A8%E5%88%86%E5%8F%82%E6%95%B0%E8%AE%AD%E7%BB%83/</url>
@@ -15,7 +69,7 @@
           
           <category> 技术 </category>
           
-          <category> 深度学习 </category>
+          <category> Pytorch </category>
           
       </categories>
       
@@ -667,7 +721,7 @@
           
           <category> 技术 </category>
           
-          <category> 深度学习 </category>
+          <category> Pytorch </category>
           
       </categories>
       
@@ -804,7 +858,7 @@
           
           <category> 技术 </category>
           
-          <category> 命令 </category>
+          <category> Linux </category>
           
       </categories>
       
@@ -831,7 +885,7 @@
           
           <category> 技术 </category>
           
-          <category> 深度学习 </category>
+          <category> Pytorch </category>
           
       </categories>
       
@@ -1213,7 +1267,7 @@
           
           <category> 技术 </category>
           
-          <category> 算法 </category>
+          <category> 算法刷题 </category>
           
       </categories>
       
@@ -1493,7 +1547,7 @@
           
           <category> 技术 </category>
           
-          <category> 算法 </category>
+          <category> 算法刷题 </category>
           
       </categories>
       
@@ -1630,7 +1684,7 @@
           
           <category> 技术 </category>
           
-          <category> 图床 </category>
+          <category> 博客 </category>
           
       </categories>
       
@@ -1659,7 +1713,7 @@
           
           <category> 技术 </category>
           
-          <category> 部署 </category>
+          <category> 博客 </category>
           
       </categories>
       
@@ -1742,7 +1796,7 @@
           
           <category> 技术 </category>
           
-          <category> 软件 </category>
+          <category> 软件环境配置 </category>
           
       </categories>
       
