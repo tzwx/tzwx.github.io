@@ -81,7 +81,7 @@ function activateLightMode(){
 </li>
 </ul>
 <h2 id="Feature-Scaling"><a href="#Feature-Scaling" class="headerlink" title="Feature Scaling"></a>Feature Scaling</h2><p>这种方法比较简单，对于每一维数据，计算平均数、标准差，然后每个数减去平均数除以标准差即可标准化。</p>
-<p><a href="https://user-images.githubusercontent.com/60562661/75095605-a8fe8600-55d1-11ea-967a-7596e215d084.png" target="_blank" rel="noopener" data-fancybox="group" data-caption="1582385736895" class="fancybox"><img alt="1582385736895" style="zoom: 67%;" data-src="https://user-images.githubusercontent.com/60562661/75095605-a8fe8600-55d1-11ea-967a-7596e215d084.png" class="lazyload" title="1582385736895"></a></p>
+<p><a href="https://user-images.githubusercontent.com/60562661/75095605-a8fe8600-55d1-11ea-967a-7596e215d084.png" target="_blank" rel="noopener" data-fancybox="group" data-caption="1582385736895" class="fancybox"><img alt="1582385736895" style="zoom: 67%;" title="1582385736895" data-src="https://user-images.githubusercontent.com/60562661/75095605-a8fe8600-55d1-11ea-967a-7596e215d084.png" class="lazyload"></a></p>
 <h2 id="Batch-Normalization"><a href="#Batch-Normalization" class="headerlink" title="Batch Normalization"></a>Batch Normalization</h2><h3 id="Note"><a href="#Note" class="headerlink" title="Note :"></a><strong>Note :</strong></h3><ul>
 <li>batch_size 要够大才有意义，估算batch的分布。如batch_size 为1，则没有意义做这件事。</li>
 <li>一般先做标准化在进入激活函数</li>
@@ -89,16 +89,16 @@ function activateLightMode(){
 <h3 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h3><ol>
 <li>首先计算出 一个batch的平均值、标准差</li>
 </ol>
-<p><a href="https://user-images.githubusercontent.com/60562661/75095608-ab60e000-55d1-11ea-80bc-f10457f65fa2.png" target="_blank" rel="noopener" data-fancybox="group" data-caption="1582386527546" class="fancybox"><img alt="1582386527546" style="zoom: 67%;" data-src="https://user-images.githubusercontent.com/60562661/75095608-ab60e000-55d1-11ea-80bc-f10457f65fa2.png" class="lazyload" title="1582386527546"></a></p>
+<p><a href="https://user-images.githubusercontent.com/60562661/75095608-ab60e000-55d1-11ea-80bc-f10457f65fa2.png" target="_blank" rel="noopener" data-fancybox="group" data-caption="1582386527546" class="fancybox"><img alt="1582386527546" style="zoom: 67%;" title="1582386527546" data-src="https://user-images.githubusercontent.com/60562661/75095608-ab60e000-55d1-11ea-80bc-f10457f65fa2.png" class="lazyload"></a></p>
 <ol>
 <li>具体的每个输出 - mean / 标准差</li>
 </ol>
-<p><a href="https://user-images.githubusercontent.com/60562661/75095607-aac84980-55d1-11ea-9a33-963dd56edd8b.png" target="_blank" rel="noopener" data-fancybox="group" data-caption="1582386468794" class="fancybox"><img alt="1582386468794" style="zoom: 67%;" data-src="https://user-images.githubusercontent.com/60562661/75095607-aac84980-55d1-11ea-9a33-963dd56edd8b.png" class="lazyload" title="1582386468794"></a></p>
+<p><a href="https://user-images.githubusercontent.com/60562661/75095607-aac84980-55d1-11ea-9a33-963dd56edd8b.png" target="_blank" rel="noopener" data-fancybox="group" data-caption="1582386468794" class="fancybox"><img alt="1582386468794" style="zoom: 67%;" title="1582386468794" data-src="https://user-images.githubusercontent.com/60562661/75095607-aac84980-55d1-11ea-9a33-963dd56edd8b.png" class="lazyload"></a></p>
 <ol>
 <li><p>train：训练时反向传播需要考虑到 <strong>σ μ</strong></p>
 </li>
 <li><p>test：测试</p>
-<p><a href="https://user-images.githubusercontent.com/60562661/75095604-a7cd5900-55d1-11ea-829b-06ca53b71ee1.png" target="_blank" rel="noopener" data-fancybox="group" data-caption class="fancybox"><img alt data-src="https://user-images.githubusercontent.com/60562661/75095604-a7cd5900-55d1-11ea-829b-06ca53b71ee1.png" class="lazyload" title></a></p>
+<p><a href="https://user-images.githubusercontent.com/60562661/75095604-a7cd5900-55d1-11ea-829b-06ca53b71ee1.png" target="_blank" rel="noopener" data-fancybox="group" data-caption class="fancybox"><img alt title data-src="https://user-images.githubusercontent.com/60562661/75095604-a7cd5900-55d1-11ea-829b-06ca53b71ee1.png" class="lazyload"></a></p>
 <ul>
 <li>首先计算出训练过程中所有的 <strong>σ μ </strong></li>
 <li>如上图的右上角 取三个 μ，靠近后面的 μ 给一个比较大的权值，靠近初始化的给比较小的权值以此来估计整个网络的 <strong>μ</strong></li>

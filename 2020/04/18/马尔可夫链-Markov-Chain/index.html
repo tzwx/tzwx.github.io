@@ -75,7 +75,7 @@ function activateLightMode(){
 <p>最简单的马尔科夫过程是一阶模型，它的状态选择仅与前一个状态有关，本文也着重讲解一阶马尔科夫链。</p>
 <h2 id="Calculate"><a href="#Calculate" class="headerlink" title="Calculate"></a>Calculate</h2><p>对于有<code>M</code>个状态的一阶马尔可夫模型，共有<code>M*M</code> 个状态转移，<strong>因为任何一个状态都有可能是所有状态的下一个转移状态。</strong></p>
 <p>每一个状态转移都有一个概率值，称为<strong>状态转移概率</strong>——这是从一个状态转移到另一个状态的概率。所有的<code>M*M</code>个概率可以用一个状态转移矩阵表示。<strong>注意这些概率并不随时间变化而不同</strong>——这是一个非常重要（但常常不符合实际）的假设。转移概率矩阵一个示意图如下图，有三种状态，所以有九种状态转移概率：</p>
-<p><a href="https://user-images.githubusercontent.com/60562661/79635819-c2711800-81a5-11ea-9e9d-82a1f3d69285.jpg" target="_blank" rel="noopener" data-fancybox="group" data-caption class="fancybox"><img alt data-src="https://user-images.githubusercontent.com/60562661/79635819-c2711800-81a5-11ea-9e9d-82a1f3d69285.jpg" class="lazyload" title></a></p>
+<p><a href="https://user-images.githubusercontent.com/60562661/79635819-c2711800-81a5-11ea-9e9d-82a1f3d69285.jpg" target="_blank" rel="noopener" data-fancybox="group" data-caption class="fancybox"><img alt title data-src="https://user-images.githubusercontent.com/60562661/79635819-c2711800-81a5-11ea-9e9d-82a1f3d69285.jpg" class="lazyload"></a></p>
 <p>计算时用<code>当前状态 * 转移概率矩阵（矩阵乘法）</code>,来从当前时刻状态计算出下一时刻状态。</p>
 <p>简单来说，一阶马尔可夫模型就是对联合概率做了简化。联合概率中：</p>
 <script type="math/tex; mode=display">

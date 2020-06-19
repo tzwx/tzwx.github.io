@@ -81,12 +81,12 @@ function activateLightMode(){
 <li><p>找出最好的函数(model)</p>
 </li>
 </ul>
-<p><a href="https://user-images.githubusercontent.com/60562661/74164678-14099d80-4c5f-11ea-961c-fd913422405a.png" target="_blank" rel="noopener" data-fancybox="group" data-caption class="fancybox"><img alt data-src="https://user-images.githubusercontent.com/60562661/74164678-14099d80-4c5f-11ea-961c-fd913422405a.png" class="lazyload" title></a></p>
+<p><a href="https://user-images.githubusercontent.com/60562661/74164678-14099d80-4c5f-11ea-961c-fd913422405a.png" target="_blank" rel="noopener" data-fancybox="group" data-caption class="fancybox"><img alt title data-src="https://user-images.githubusercontent.com/60562661/74164678-14099d80-4c5f-11ea-961c-fd913422405a.png" class="lazyload"></a></p>
 <p>在定义好函数和确定损失函数之后，就要开始调整参数。这时候就需要用到<strong>梯度下降法</strong>了。</p>
 <h2 id="梯度下降法概述"><a href="#梯度下降法概述" class="headerlink" title="梯度下降法概述"></a>梯度下降法概述</h2><p>调整参数就是为了师让损失函数最小，也就是选择出最好的函数 （Model）。先讲一下梯度下降法更新参数的真个流程。</p>
 <h3 id="梯度"><a href="#梯度" class="headerlink" title="梯度"></a>梯度</h3><p>首先，梯度Gradient，就是在这一点的微分（偏导数），也就是曲线在该点切线的斜率，高等数学就有讲过；不理解微分就可以当作是等高线图的法线方向。梯度代表了函数上升最快的方向，所以一个函数在一点求出梯度，然后按照梯度的反方向偏移就是减小最快的。</p>
 <p><strong>所以这里也可以得知，首先需要一个可微的函数。</strong></p>
-<h3 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h3><p><a href="https://user-images.githubusercontent.com/60562661/74164735-208df600-4c5f-11ea-842d-dd446164c461.png" target="_blank" rel="noopener" data-fancybox="group" data-caption class="fancybox"><img alt data-src="https://user-images.githubusercontent.com/60562661/74164735-208df600-4c5f-11ea-842d-dd446164c461.png" class="lazyload" title></a></p>
+<h3 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h3><p><a href="https://user-images.githubusercontent.com/60562661/74164735-208df600-4c5f-11ea-842d-dd446164c461.png" target="_blank" rel="noopener" data-fancybox="group" data-caption class="fancybox"><img alt title data-src="https://user-images.githubusercontent.com/60562661/74164735-208df600-4c5f-11ea-842d-dd446164c461.png" class="lazyload"></a></p>
 <ol>
 <li><p>假设对于参数w，要更新w，首先要初始化w的值，可以随机初始化一个值，当然也有其他方法这里并不关心</p>
 </li>

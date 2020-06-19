@@ -80,7 +80,7 @@ L = \frac{1}{2N}\sum_{n=1}^Nyd^2 + (1-y)max(margin-d, 0)^2</script><p>其中，<
 <li>d表示两个样本的<code>欧氏距离</code></li>
 </ul>
 <p>输入为 ( <strong>dataA, dataB, label</strong> )</p>
-<p><a href="https://user-images.githubusercontent.com/60562661/82234076-790e1700-9963-11ea-8535-c50868b4e5c4.jpg" target="_blank" rel="noopener" data-fancybox="group" data-caption="img" class="fancybox"><img alt="img" style="zoom: 35%;" data-src="https://user-images.githubusercontent.com/60562661/82234076-790e1700-9963-11ea-8535-c50868b4e5c4.jpg" class="lazyload" title="img"></a></p>
+<p><a href="https://user-images.githubusercontent.com/60562661/82234076-790e1700-9963-11ea-8535-c50868b4e5c4.jpg" target="_blank" rel="noopener" data-fancybox="group" data-caption="img" class="fancybox"><img alt="img" style="zoom: 35%;" title="img" data-src="https://user-images.githubusercontent.com/60562661/82234076-790e1700-9963-11ea-8535-c50868b4e5c4.jpg" class="lazyload"></a></p>
 <p>该损失函数可以有效的处理<strong>孪生神经网络</strong>中的<strong>paired data</strong>的关系，具体逻辑是：</p>
 <ul>
 <li>若一对数据是同一组，那么<code>label = 1</code> 即<code>y = 1</code> ，只有前半部分起作用，后半部分值为0；此时最小化loss, 两者的欧氏距离变小，就会使两者更相似；</li>

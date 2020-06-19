@@ -79,13 +79,13 @@ function activateLightMode(){
 <h2 id="计算"><a href="#计算" class="headerlink" title="计算"></a>计算</h2><blockquote>
 <p>感受野可以通过下图更形象的理解。</p>
 </blockquote>
-<p><a href="https://user-images.githubusercontent.com/60562661/79768730-c34caa00-835d-11ea-8f23-a2b8a00fdd67.jpg" target="_blank" rel="noopener" data-fancybox="group" data-caption class="fancybox"><img alt data-src="https://user-images.githubusercontent.com/60562661/79768730-c34caa00-835d-11ea-8f23-a2b8a00fdd67.jpg" class="lazyload" title></a></p>
+<p><a href="https://user-images.githubusercontent.com/60562661/79768730-c34caa00-835d-11ea-8f23-a2b8a00fdd67.jpg" target="_blank" rel="noopener" data-fancybox="group" data-caption class="fancybox"><img alt title data-src="https://user-images.githubusercontent.com/60562661/79768730-c34caa00-835d-11ea-8f23-a2b8a00fdd67.jpg" class="lazyload"></a></p>
 <ul>
 <li>Raw Image是原始图像；</li>
 <li>用<code>kerneal_size = 3*3</code>，<code>stride = 2</code>的卷积核扫过得到conv1，故conv1中一个像素映射到原始图像是<code>3*3</code>；</li>
 <li>conv2中一个像素对应conv1<code>2*2</code>，映射回原始图像为<code>5*5</code></li>
 </ul>
-<p><a href="https://user-images.githubusercontent.com/60562661/79768735-c5af0400-835d-11ea-879e-a7f84ae5f22a.jpg" target="_blank" rel="noopener" data-fancybox="group" data-caption class="fancybox"><img alt data-src="https://user-images.githubusercontent.com/60562661/79768735-c5af0400-835d-11ea-879e-a7f84ae5f22a.jpg" class="lazyload" title></a></p>
+<p><a href="https://user-images.githubusercontent.com/60562661/79768735-c5af0400-835d-11ea-879e-a7f84ae5f22a.jpg" target="_blank" rel="noopener" data-fancybox="group" data-caption class="fancybox"><img alt title data-src="https://user-images.githubusercontent.com/60562661/79768735-c5af0400-835d-11ea-879e-a7f84ae5f22a.jpg" class="lazyload"></a></p>
 <p>上图则更加直观的看出了感受野的大小变花，感受野与卷积核尺寸、步长都有关系。</p>
 <p>下面给出计算公式：</p>
 <script type="math/tex; mode=display">
