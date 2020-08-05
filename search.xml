@@ -4,6 +4,35 @@
   
     
     <entry>
+      <title>Ubuntu16/18可道云云盘搭建</title>
+      <link href="/2020/08/06/Ubuntu16-18%E5%8F%AF%E9%81%93%E4%BA%91%E4%BA%91%E7%9B%98%E6%90%AD%E5%BB%BA/"/>
+      <url>/2020/08/06/Ubuntu16-18%E5%8F%AF%E9%81%93%E4%BA%91%E4%BA%91%E7%9B%98%E6%90%AD%E5%BB%BA/</url>
+      
+        <content type="html"><![CDATA[<html><head><link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script></head><body><p>实验室有自己有一台主机闲置，想着闲置太浪费，但是一直不会用。所以就把这个主机当成一个web服务器😝，这个主机系统是<strong>Ubuntu18.04</strong>， <strong>Ubuntu16.04也已经测试</strong>。</p><h3 id="安装-apache2"><a href="#安装-apache2" class="headerlink" title="安装 apache2"></a>安装 apache2</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">shell</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">// 下载安装</span><br><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install apache2</span><br><span class="line">// 防火墙</span><br><span class="line">sudo ufw allow 'Apache Full'</span><br><span class="line">//启动</span><br><span class="line">sudo ufw enable</span><br></pre></td></tr></tbody></table></figure></div><p>Apache2服务启动后，可以输入本机ip看到对应的页面表示安装成功。</p><p>参考链接：<a href="https://www.cnblogs.com/lfri/p/10522392.html" target="_blank" rel="noopener">https://www.cnblogs.com/lfri/p/10522392.html</a></p><h3 id="安装mysql和php"><a href="#安装mysql和php" class="headerlink" title="安装mysql和php"></a>安装mysql和php</h3><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">shell</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install php-mysql</span><br><span class="line">sudo apt-get install phpmyadmin</span><br></pre></td></tr></tbody></table></figure></div><h3 id="安装可道云"><a href="#安装可道云" class="headerlink" title="安装可道云"></a>安装可道云</h3><p>下载可道云源码，解压到：</p><div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">shell</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/var/www/html/cloud</span><br></pre></td></tr></tbody></table></figure></div><p>就可以通过ip来访问：<strong>10.21.7.216/cloud</strong></p><p><a href="https://user-images.githubusercontent.com/60562661/89437771-94c2d580-d77a-11ea-83c1-ff81522c5fdd.png" data-fancybox="group" data-caption class="fancybox"><img alt title data-src="https://user-images.githubusercontent.com/60562661/89437771-94c2d580-d77a-11ea-83c1-ff81522c5fdd.png" class="lazyload"></a></p></body></html>]]></content>
+      
+      
+      <categories>
+          
+          <category> 技术 </category>
+          
+          <category> Web </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Cloud </tag>
+            
+            <tag> Web Application </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>再探形变卷积</title>
       <link href="/2020/07/13/%E5%86%8D%E6%8E%A2%E5%BD%A2%E5%8F%98%E5%8D%B7%E7%A7%AF/"/>
       <url>/2020/07/13/%E5%86%8D%E6%8E%A2%E5%BD%A2%E5%8F%98%E5%8D%B7%E7%A7%AF/</url>
@@ -1848,7 +1877,7 @@
           
           <category> 技术 </category>
           
-          <category> 黑科技 </category>
+          <category> Web </category>
           
       </categories>
       
@@ -1856,6 +1885,8 @@
         <tags>
             
             <tag> Cloud </tag>
+            
+            <tag> Web Application </tag>
             
         </tags>
       
