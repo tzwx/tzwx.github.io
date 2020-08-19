@@ -4,6 +4,33 @@
   
     
     <entry>
+      <title>再探形变卷积</title>
+      <link href="/2020/08/19/%E5%86%8D%E6%8E%A2%E5%BD%A2%E5%8F%98%E5%8D%B7%E7%A7%AF/"/>
+      <url>/2020/08/19/%E5%86%8D%E6%8E%A2%E5%BD%A2%E5%8F%98%E5%8D%B7%E7%A7%AF/</url>
+      
+        <content type="html"><![CDATA[<html><head><link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script></head><body><p>前一篇博文写过关于形变卷积的部分，但是写的比较粗略，故再来分析、整理一下形变卷积相关知识。</p><blockquote><ul><li>因为网络最终用的形变卷积，所以是非看不可。</li><li>好读书，不求甚解。 不愧是我</li></ul></blockquote><h3 id="初衷"><a href="#初衷" class="headerlink" title="初衷"></a>初衷</h3><p><strong>适应几何变换</strong></p><p>传统卷积卷积核是正方形，扫描不规则图形也只能用方形区域，而实际任务中，很多东西都不是规则的，例如生物、汽车等。传统卷积核无法适应比较大的变换，故提出了可以变形以适应几何变换的形变卷积。</p><hr><h3 id="卷积过程计算"><a href="#卷积过程计算" class="headerlink" title="卷积过程计算"></a>卷积过程计算</h3><ul><li><strong>传统卷积计算</strong></li></ul><script type="math/tex; mode=display">y(p_0) = \sum_{p_n \in R} w(p_n) * x(p_0 + p_n)</script><p>其中，<code>p0</code>表示输出特征图的一个点；<code>pn</code>则是卷积核的坐标。</p><ul><li><strong>形变卷积计算</strong></li></ul><script type="math/tex; mode=display">y(p_0) = \sum_{p_n \in R} w(p_n) * x(p_0 + p_n + \Delta p_n)</script><p>其中。最后加了一项<code>delta</code> 表示偏移量， 取值从1-N，N是卷积核尺寸。</p><blockquote><p>这里P0表示输出特征图的点，之所以pn要加p0，因为是3X3卷积核，原始图片9个像素对应新特征图一个像素。</p><p>2020-8-19更新</p></blockquote><ul><li><strong>采样</strong></li></ul><p>此时采样的点加了一项<code>delta</code>, 可能是小数，因此需要用插值算法来确定采样位置，此处应用的是双线性插值来确定采样的位置，如下：</p><script type="math/tex; mode=display">p = p_0 + p_n + \Delta p_n</script><script type="math/tex; mode=display">x(p) = \sum_q G(q,p)*x(q)</script><p>大致意思是 ：先枚举输入特征图x所有的点q，用插值核G做个运算再乘以x(q).</p><blockquote><p> 总之这一步就是确定位置。之前看过有关书上讲解双线性采样的问题，可以用公式直接算出来，这边看的不是很明白，但是没那么重要。</p><p>从形变卷积公式可以看出，需要学习的参数有两个：卷积核的weight，偏移量<code>Delta</code>, 偏移量显得至关重要</p></blockquote><ul><li><strong>反向传播学习</strong></li></ul><script type="math/tex; mode=display">\frac{\partial y(p_0)}{\partial \Delta p_n} = \sum_{p_n \in R}w(p_n)*\frac{\partial x(p_0 + p_n + \Delta p_n)}{\partial \Delta p_n}= \sum_{p_n \in R} \left[w(p_n) * \sum_q\frac{\partial G(q,p_0+p_n+\Delta p_n)}{\partial \Delta p_n} * x(q)\right]</script><blockquote><p>偏移量梯度即在上述计算公式中有偏移量这一项的都计算微分。</p></blockquote><hr><h3 id="输出特征图尺寸计算"><a href="#输出特征图尺寸计算" class="headerlink" title="输出特征图尺寸计算"></a>输出特征图尺寸计算</h3><p>形变卷积与普通卷积无异，输出特征图尺寸计算需要先知道卷积核大小，再根据公式来计算。卷积核大小与是否使用空洞有关系。</p><ul><li><strong>空洞卷积卷积核尺寸计算</strong></li></ul><script type="math/tex; mode=display">K = k+(k-1)*(r-1)</script><blockquote><p>r 为空洞率， r=1时卷积核尺寸不变，故Pytorch <code>nn.Conv2D</code> 默认 dilated=1.</p><p><strong>这里吐槽一下，看了三四个人写的博客，都说dlitated=1表示注入一个空洞，这是错的。不可信！</strong></p></blockquote><ul><li><strong>特征图尺寸计算</strong></li></ul><script type="math/tex; mode=display">W = \frac{w - K +2*P}{S} +1 = \frac{w - [k+(K-1)*(r-1)] + 2P}{S} +1</script><script type="math/tex; mode=display">H = \frac{h - K +2*P}{S} +1 = \frac{h - [k+(K-1)*(r-1)] + 2P}{S} +1</script><blockquote><p>把空洞卷积卷积核带进去即可。</p></blockquote><hr><h3 id="关于卷积"><a href="#关于卷积" class="headerlink" title="关于卷积"></a>关于卷积</h3><p>理论上，卷积核感受野随着卷积层的增加而线性增加；</p><p>事实上，有效的感受野是呈高斯分布，即一个卷积核中心的区域的比较有效。</p><p>因此实际中，有效的感受野随着卷积层的增加呈平方根增加，是远远不够的。空洞卷积恰好处理这个问题。</p><p><strong>2020.7.13更新！</strong></p><p><strong>FRY</strong></p><hr><h3 id="2020-8-19-第二次更新"><a href="#2020-8-19-第二次更新" class="headerlink" title="2020-8-19 第二次更新"></a>2020-8-19 第二次更新</h3><h4 id="Deformable-Convolution-V2"><a href="#Deformable-Convolution-V2" class="headerlink" title="Deformable Convolution V2"></a>Deformable Convolution V2</h4><p>可形变卷积V2版本，给原始每个偏移的采样点加入了权重，即：</p><script type="math/tex; mode=display">y(p) = \sum_{k=1}^K w_k \times x(p + p_k + \Delta p_k)\times\Delta m_k</script><p>​    K表示采样位置；最后多了一项每个采样像素权重的控制。</p><p><strong>有个地方需要注意</strong>：</p><ul><li><p>V1和V2版本，<code>Offsets</code> 输出通道数均为<code>2K</code>, 因为每个点偏移需要x，y两个分量来表示，故用2个通道</p></li><li><p>V2版本中输出通道数为<code>K</code> ，每个点一个权重，故一共K个权重</p></li></ul></body></html>]]></content>
+      
+      
+      <categories>
+          
+          <category> 技术 </category>
+          
+          <category> 深度学习 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> CNN </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Ubuntu16/18可道云云盘搭建</title>
       <link href="/2020/08/06/Ubuntu16-18%E5%8F%AF%E9%81%93%E4%BA%91%E4%BA%91%E7%9B%98%E6%90%AD%E5%BB%BA/"/>
       <url>/2020/08/06/Ubuntu16-18%E5%8F%AF%E9%81%93%E4%BA%91%E4%BA%91%E7%9B%98%E6%90%AD%E5%BB%BA/</url>
@@ -25,33 +52,6 @@
             <tag> Cloud </tag>
             
             <tag> Web Application </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>再探形变卷积</title>
-      <link href="/2020/07/13/%E5%86%8D%E6%8E%A2%E5%BD%A2%E5%8F%98%E5%8D%B7%E7%A7%AF/"/>
-      <url>/2020/07/13/%E5%86%8D%E6%8E%A2%E5%BD%A2%E5%8F%98%E5%8D%B7%E7%A7%AF/</url>
-      
-        <content type="html"><![CDATA[<html><head><link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script></head><body><p>前一篇博文写过关于形变卷积的部分，但是写的比较粗略，故再来分析、整理一下形变卷积相关知识。</p><blockquote><ul><li>因为网络最终用的形变卷积，所以是非看不可。</li><li>好读书，不求甚解。 不愧是我</li></ul></blockquote><h3 id="初衷"><a href="#初衷" class="headerlink" title="初衷"></a>初衷</h3><p><strong>适应几何变换</strong></p><p>传统卷积卷积核是正方形，扫描不规则图形也只能用方形区域，而实际任务中，很多东西都不是规则的，例如生物、汽车等。传统卷积核无法适应比较大的变换，故提出了可以变形以适应几何变换的形变卷积。</p><hr><h3 id="卷积过程计算"><a href="#卷积过程计算" class="headerlink" title="卷积过程计算"></a>卷积过程计算</h3><ul><li><strong>传统卷积计算</strong></li></ul><script type="math/tex; mode=display">y(p_0) = \sum_{p_n \in R} w(p_n) * x(p_0 + p_n)</script><p>其中，<code>p0</code>表示输出特征图的一个点；<code>pn</code>则是卷积核的坐标。</p><ul><li><strong>形变卷积计算</strong></li></ul><script type="math/tex; mode=display">y(p_0) = \sum_{p_n \in R} w(p_n) * x(p_0 + p_n + \Delta p_n)</script><p>其中。最后加了一项<code>delta</code> 表示偏移量， 取值从1-N，N是卷积核尺寸。</p><ul><li><strong>采样</strong></li></ul><p>此时采样的点加了一项<code>delta</code>, 可能是小数，因此需要用插值算法来确定采样位置，此处应用的是双线性插值来确定采样的位置，如下：</p><script type="math/tex; mode=display">p = p_0 + p_n + \Delta p_n</script><script type="math/tex; mode=display">x(p) = \sum_q G(q,p)*x(q)</script><p>大致意思是 ：先枚举输入特征图x所有的点q，用插值核G做个运算再乘以x(q).</p><blockquote><p> 总之这一步就是确定位置。之前看过有关书上讲解双线性采样的问题，可以用公式直接算出来，这边看的不是很明白，但是没那么重要。</p><p>从形变卷积公式可以看出，需要学习的参数有两个：卷积核的weight，偏移量<code>Delta</code>, 偏移量显得至关重要</p></blockquote><ul><li><strong>反向传播学习</strong></li></ul><script type="math/tex; mode=display">\frac{\partial y(p_0)}{\partial \Delta p_n} = \sum_{p_n \in R}w(p_n)*\frac{\partial x(p_0 + p_n + \Delta p_n)}{\partial \Delta p_n}= \sum_{p_n \in R} \left[w(p_n) * \sum_q\frac{\partial G(q,p_0+p_n+\Delta p_n)}{\partial \Delta p_n} * x(q)\right]</script><blockquote><p>偏移量梯度即在上述计算公式中有偏移量这一项的都计算微分。</p></blockquote><hr><h3 id="输出特征图尺寸计算"><a href="#输出特征图尺寸计算" class="headerlink" title="输出特征图尺寸计算"></a>输出特征图尺寸计算</h3><p>形变卷积与普通卷积无异，输出特征图尺寸计算需要先知道卷积核大小，再根据公式来计算。卷积核大小与是否使用空洞有关系。</p><ul><li><strong>空洞卷积卷积核尺寸计算</strong></li></ul><script type="math/tex; mode=display">K = k+(k-1)*(r-1)</script><blockquote><p>r 为空洞率， r=1时卷积核尺寸不变，故Pytorch <code>nn.Conv2D</code> 默认 dilated=1.</p><p><strong>这里吐槽一下，看了三四个人写的博客，都说dlitated=1表示注入一个空洞，这是错的。不可信！</strong></p></blockquote><ul><li><strong>特征图尺寸计算</strong></li></ul><script type="math/tex; mode=display">W = \frac{w - K +2*P}{S} +1 = \frac{w - [k+(K-1)*(r-1)] + 2P}{S} +1</script><script type="math/tex; mode=display">H = \frac{h - K +2*P}{S} +1 = \frac{h - [k+(K-1)*(r-1)] + 2P}{S} +1</script><blockquote><p>把空洞卷积卷积核带进去即可。</p></blockquote><hr><h3 id="关于卷积"><a href="#关于卷积" class="headerlink" title="关于卷积"></a>关于卷积</h3><p>理论上，卷积核感受野随着卷积层的增加而线性增加；</p><p>事实上，有效的感受野是呈高斯分布，即一个卷积核中心的区域的比较有效。</p><p>因此实际中，有效的感受野随着卷积层的增加呈平方根增加，是远远不够的。空洞卷积恰好处理这个问题。</p><p><strong>2020.7.13更新！</strong></p><p><strong>FRY</strong></p></body></html>]]></content>
-      
-      
-      <categories>
-          
-          <category> 技术 </category>
-          
-          <category> 深度学习 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> CNN </tag>
             
         </tags>
       
